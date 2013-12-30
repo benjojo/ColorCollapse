@@ -8,6 +8,30 @@ namespace Prototype
 {
     class ColorConv
     {
+        public static RGB LabtoRGB(double l, double a, double b)
+        {
+            return XYZtoRGB(LabtoXYZ(l, a, b).X,LabtoXYZ(l, a, b).Y,LabtoXYZ(l, a, b).Z);
+        }
+
+        public static CIEXYZ LabtoXYZ(double l, double a, double b)
+        {
+            //
+            double delta = 6.0 / 29.0;
+
+            double fy = (l + 16) / 116.0;
+            double fx = fy + (a / 500.0);
+            double fz = fy - (b / 200.0);
+
+            return new CIEXYZ(
+                (fx > delta) ? CIEXYZ.D65.X * (fx * fx * fx) : (fx - 16.0 / 116.0) * 3 * (
+                    delta * delta) * CIEXYZ.D65.X,
+                (fy > delta) ? CIEXYZ.D65.Y * (fy * fy * fy) : (fy - 16.0 / 116.0) * 3 * (
+                    delta * delta) * CIEXYZ.D65.Y,
+                (fz > delta) ? CIEXYZ.D65.Z * (fz * fz * fz) : (fz - 16.0 / 116.0) * 3 * (
+                    delta * delta) * CIEXYZ.D65.Z
+                );
+        }
+
         public static CIELab RGBtoLab(int red, int green, int blue)
         {
             return XYZtoLab(RGBtoXYZ(red, green, blue));

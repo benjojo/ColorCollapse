@@ -30,6 +30,10 @@ namespace Prototype
                 }
             }
 
+
+            // Now put it back into a PNG.
+
+            Bitmap Output = new Bitmap(LoadedImg.Width, LoadedImg.Height);
         }
     }
 }
