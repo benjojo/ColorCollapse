@@ -15,7 +15,6 @@ namespace Prototype
 
         public static CIEXYZ LabtoXYZ(double l, double a, double b)
         {
-            //
             double delta = 6.0 / 29.0;
 
             double fy = (l + 16) / 116.0;
