@@ -7,6 +7,7 @@ namespace Prototype
     {
         static void Main(string[] args)
         {
+            Image LoadedImg = Image.FromFile("sample.jpg");
         }
     }
 }
