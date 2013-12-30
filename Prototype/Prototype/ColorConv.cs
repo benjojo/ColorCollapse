@@ -8,6 +8,11 @@ namespace Prototype
 {
     class ColorConv
     {
+        public static CIELab RGBtoLab(int red, int green, int blue)
+        {
+            return XYZtoLab(RGBtoXYZ(red, green, blue));
+        }
+
         public static CIEXYZ RGBtoXYZ(int red, int green, int blue)
         {
             // normalize red, green, blue values
@@ -28,8 +33,29 @@ namespace Prototype
                 (r * 0.4124 + g * 0.3576 + b * 0.1805),
                 (r * 0.2126 + g * 0.7152 + b * 0.0722),
                 (r * 0.0193 + g * 0.1192 + b * 0.9505)
-                );
+            );
         }
+
+        private static double Fxyz(double t)
+        {
+            return ((t > 0.008856) ? Math.Pow(t, (1.0 / 3.0)) : (7.787 * t + 16.0 / 116.0));
+        }
+
+        public static CIELab XYZtoLab(CIEXYZ input)
+        {
+            double x, y, z;
+            x = input.X;
+            y = input.Y;
+            z = input.Z;
+
+            CIELab lab = CIELab.Empty;
+            lab.L = 116.0 * Fxyz(y / CIEXYZ.D65.Y) - 16;
+            lab.A = 500.0 * (Fxyz(x / CIEXYZ.D65.X) - Fxyz(y / CIEXYZ.D65.Y));
+            lab.B = 200.0 * (Fxyz(y / CIEXYZ.D65.Y) - Fxyz(z / CIEXYZ.D65.Z));
+
+            return lab;
+        }
+
 
         public static RGB XYZtoRGB(double x, double y, double z)
         {
@@ -53,6 +79,102 @@ namespace Prototype
                     Clinear[2] * 255.0)))
                 );
         }
+    }
+    public struct CIELab
+    {
+        /// <summary>
+        /// Gets an empty CIELab structure.
+        /// </summary>
+        public static readonly CIELab Empty = new CIELab();
+
+        private double l;
+        private double a;
+        private double b;
+
+
+        public static bool operator ==(CIELab item1, CIELab item2)
+        {
+            return (
+                item1.L == item2.L
+                && item1.A == item2.A
+                && item1.B == item2.B
+                );
+        }
+
+        public static bool operator !=(CIELab item1, CIELab item2)
+        {
+            return (
+                item1.L != item2.L
+                || item1.A != item2.A
+                || item1.B != item2.B
+                );
+        }
+
+
+        /// <summary>
+        /// Gets or sets L component.
+        /// </summary>
+        public double L
+        {
+            get
+            {
+                return this.l;
+            }
+            set
+            {
+                this.l = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a component.
+        /// </summary>
+        public double A
+        {
+            get
+            {
+                return this.a;
+            }
+            set
+            {
+                this.a = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a component.
+        /// </summary>
+        public double B
+        {
+            get
+            {
+                return this.b;
+            }
+            set
+            {
+                this.b = value;
+            }
+        }
+
+        public CIELab(double l, double a, double b)
+        {
+            this.l = l;
+            this.a = a;
+            this.b = b;
+        }
+
+        public override bool Equals(Object obj)
+        {
+            if (obj == null || GetType() != obj.GetType()) return false;
+
+            return (this == (CIELab)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return L.GetHashCode() ^ a.GetHashCode() ^ b.GetHashCode();
+        }
+
     }
 
     public struct CIEXYZ
