@@ -20,7 +20,6 @@ namespace Prototype
                 }
             }
             // this part actually changes the whole image to be color blind friendly
-
             for (int x = 0; x < LoadedImg.Width; x++)
             {
                 for (int y = 0; y < LoadedImg.Height; y++)
@@ -28,6 +27,8 @@ namespace Prototype
                     double res = (px[x, y].A + px[x, y].B) / 2;
                     px[x, y].A = res;
                     px[x, y].B = res;
+                    // At this point the image is friendly with 99% of all colorblind people (:toot:)
+                    // BUT WAIT, we can't just leave that 1% out. that would be mean!
                 }
             }
 
