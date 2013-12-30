@@ -29,7 +29,7 @@ namespace Prototype
                     px[x, y].B = res;
                     // At this point the image is friendly with 99% of all colorblind people (:toot:)
                     // BUT WAIT, we can't just leave that 1% out. that would be mean!
-                    px[x, y].L = px[x, y].L * res;
+                    px[x, y].L = (px[x, y].L + res) / 2;
                 }
             }
 
