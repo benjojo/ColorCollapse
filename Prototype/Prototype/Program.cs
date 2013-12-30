@@ -20,6 +20,16 @@ namespace Prototype
                 }
             }
 
+            for (int x = 0; x < LoadedImg.Width - 1; x++)
+            {
+                for (int y = 0; y < LoadedImg.Height - 1; y++)
+                {
+                    double res = (px[x, y].A + px[x, y].B) / 2;
+                    px[x, y].A = res;
+                    px[x, y].B = res;
+                }
+            }
+
         }
     }
 }
