@@ -10,7 +10,7 @@ namespace Prototype
             Image LoadedImg = Image.FromFile("sample.jpg");
             Bitmap LoadedBit = (Bitmap)LoadedImg;
             CIELab[,] px = new CIELab[LoadedImg.Width+1, LoadedImg.Height+1];
-
+            // This part make the LAB array.
             for (int x = 0; x < LoadedImg.Width; x++)
             {
                 for (int y = 0; y < LoadedImg.Height; y++)
@@ -19,6 +19,7 @@ namespace Prototype
                     px[x, y] = ColorConv.RGBtoLab(Pnt.R, Pnt.G, Pnt.B);
                 }
             }
+            // this part actually changes the whole image to be color blind friendly
 
             for (int x = 0; x < LoadedImg.Width; x++)
             {
