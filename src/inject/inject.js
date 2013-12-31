@@ -67,7 +67,7 @@ function ColJs() {
         lab = {
             l: 0,
             a: 0,
-            b: 055
+            b: 0
         };
         lab.l = 116.0 * this.Fxyz(y / 1.0) - 16;
         lab.a = 500.0 * (this.Fxyz(x / 0.9505) - this.Fxyz(y / 1.0));
