@@ -124,7 +124,13 @@ chrome.extension.sendMessage({}, function(response) {
 
                 ctx.putImageData(map, 0, 0);
                 // replace image source with canvas data
-                imgElement.src = canvas.toDataURL();
+                var before = imgElement.src;
+                var imgtags = document.getElementsByTagName('img');
+                for (var i = 0; i < imgtags.length; i++) {
+                	if (imgtags[i].src == before) {
+                		imgtags[i].src = canvas.toDataURL();
+                	}
+                }
             }
 
             function DoImg(ary, ptr) {
@@ -143,7 +149,10 @@ chrome.extension.sendMessage({}, function(response) {
                 }
             }
             var imgtags = document.getElementsByTagName('img');
-            DoImg(imgtags, 0)
+            var besttags = _.uniq(imgtags,false,function(a){
+            	return a.src
+            });
+            DoImg(besttags, 0)
 
             console.log("Processed all images");
         }
