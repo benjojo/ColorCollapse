@@ -99,7 +99,7 @@ chrome.extension.sendMessage({}, function(response) {
                 var imdata = map.data;
 
                 // convert image to grayscale
-                var r, g, b, avg;
+                var r, g, b;
                 var x = new ColJs();
                 for (var p = 0, len = imdata.length; p < len; p += 4) {
 
@@ -128,9 +128,9 @@ chrome.extension.sendMessage({}, function(response) {
             }
 
             function DoImg(ary, ptr) {
-            	console.log(ary[ptr],ary.length,ptr);
+                console.log(ary[ptr], ary.length, ptr);
                 if (ary.length > ptr) {
-                	console.log(ary[ptr]);
+                    console.log(ary[ptr]);
                     try {
                         processImg(ary[ptr], '#000000');
                     } catch (e) {
