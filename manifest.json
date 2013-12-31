@@ -15,8 +15,11 @@
   ],
   "content_scripts": [
     {
-      "matches": ["http://*/*"],
+      "matches": [
+        "http://*/*"
+      ],
       "js": [
+        "src/inject/lodash.min.js",
         "src/inject/inject.js"
       ]
     }
