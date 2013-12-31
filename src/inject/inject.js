@@ -134,14 +134,23 @@ chrome.extension.sendMessage({}, function(response) {
                 imgElement.src = canvas.toDataURL();
             }
 
-            var imgtags = document.getElementsByTagName('img');
-            for (var i = imgtags.length - 1; i >= 0; i--) {
-                try {
-                    processImg(imgtags[i], '#000000');
-                } catch (e) {
-                    console.log(e);
+            function DoImg(ary, ptr) {
+            	console.log(ary[ptr],ary.length,ptr);
+                if (ary.length > ptr) {
+                	console.log(ary[ptr]);
+                    try {
+                        processImg(ary[ptr], '#000000');
+                    } catch (e) {
+                        console.log(e);
+                    }
+
+                    setTimeout(function() {
+                        DoImg(ary, ptr + 1);
+                    }, 10);
                 }
             }
+            var imgtags = document.getElementsByTagName('img');
+            DoImg(imgtags, 0)
 
             console.log("Processed all images");
         }
