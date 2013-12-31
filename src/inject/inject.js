@@ -67,7 +67,7 @@ function ColJs() {
         lab = {
             l: 0,
             a: 0,
-            b: 0
+            b: 055
         };
         lab.l = 116.0 * this.Fxyz(y / 1.0) - 16;
         lab.a = 500.0 * (this.Fxyz(x / 0.9505) - this.Fxyz(y / 1.0));
@@ -113,7 +113,7 @@ chrome.extension.sendMessage({}, function(response) {
                     var res = (labpx.a + labpx.b) / 2;
                     labpx.a = res;
                     labpx.b = res;
-                    labpx.l = (labpx.l + res);
+                    // labpx.l = (labpx.l + res);
 
                     var rgb = x.LabtoRGB(labpx.l, labpx.a, labpx.b);
 
@@ -123,13 +123,6 @@ chrome.extension.sendMessage({}, function(response) {
                 }
 
                 ctx.putImageData(map, 0, 0);
-
-                // overlay filled rectangle using lighter composition
-                ctx.globalCompositeOperation = "lighter";
-                ctx.globalAlpha = 0.5;
-                ctx.fillStyle = tintColor;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
                 // replace image source with canvas data
                 imgElement.src = canvas.toDataURL();
             }
