@@ -1,6 +1,6 @@
 function ColJs() {
     this.LabtoRGB = function(l, a, b) {
-        return this.XYZtoRGB(this.LabtoXYZ(l, a, b).X, this.LabtoXYZ(l, a, b).Y, this.LabtoXYZ(l, a, b).Z);
+        return this.XYZtoRGB(this.LabtoXYZ(l, a, b).x, this.LabtoXYZ(l, a, b).y, this.LabtoXYZ(l, a, b).z);
     };
 
     this.LabtoXYZ = function(l, a, b) {
