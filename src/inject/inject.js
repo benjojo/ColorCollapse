@@ -80,11 +80,33 @@ function ColJs() {
 }
 
 
+
+function processCSSRGB(inp) {
+    // expecting rgb(17, 68, 119) 
+    // or 0px none rgb(17, 68, 119)
+    var bitsofrgb = inp.split("(")[1].split(",");
+
+    return {
+        r: parseInt(bitsofrgb[0]),
+        g: parseInt(bitsofrgb[1]),
+        b: parseInt(bitsofrgb[2])
+    };
+}
+
+function colMagic(r, g, b) {
+    var x = new ColJs();
+    var labpx = x.RGBtoLab(r, g, b);
+    var res = (labpx.a + labpx.b) / 2;
+    labpx.a = res;
+    labpx.b = res;
+
+    return x.LabtoRGB(labpx.l, labpx.a, labpx.b);
+}
+
 chrome.extension.sendMessage({}, function(response) {
     var readyStateCheckInterval = setInterval(function() {
         if (document.readyState === "complete") {
             clearInterval(readyStateCheckInterval);
-
 
             function processImg(imgElement, tintColor) {
                 // create hidden canvas (using image dimensions)
@@ -100,23 +122,13 @@ chrome.extension.sendMessage({}, function(response) {
 
                 // convert image to grayscale
                 var r, g, b;
-                var x = new ColJs();
                 for (var p = 0, len = imdata.length; p < len; p += 4) {
 
                     r = imdata[p]
                     g = imdata[p + 1];
                     b = imdata[p + 2];
-                    // alpha channel (p+3) is ignored           
-
-                    var labpx = x.RGBtoLab(r, g, b);
-                    // res = (px[x, y].A + px[x, y].B) / 2
-                    var res = (labpx.a + labpx.b) / 2;
-                    labpx.a = res;
-                    labpx.b = res;
-                    // labpx.l = (labpx.l + res);
-
-                    var rgb = x.LabtoRGB(labpx.l, labpx.a, labpx.b);
-
+                    // alpha channel (p+3) is ignored
+                    var rgb = colMagic(r, g, b)
                     imdata[p + 0] = rgb.r;
                     imdata[p + 1] = rgb.g;
                     imdata[p + 2] = rgb.b;
@@ -127,9 +139,9 @@ chrome.extension.sendMessage({}, function(response) {
                 var before = imgElement.src;
                 var imgtags = document.getElementsByTagName('img');
                 for (var i = 0; i < imgtags.length; i++) {
-                	if (imgtags[i].src == before) {
-                		imgtags[i].src = canvas.toDataURL();
-                	}
+                    if (imgtags[i].src == before) {
+                        imgtags[i].src = canvas.toDataURL();
+                    }
                 }
             }
 
@@ -149,12 +161,29 @@ chrome.extension.sendMessage({}, function(response) {
                 }
             }
             var imgtags = document.getElementsByTagName('img');
-            var besttags = _.uniq(imgtags,false,function(a){
-            	return a.src
+            var besttags = _.uniq(imgtags, false, function(a) {
+                return a.src
             });
             DoImg(besttags, 0)
 
             console.log("Processed all images");
+            // Now to rewrite CSS!
+            var AllTheDom = window.document.getElementsByTagName("*");
+            for (var i = 0; i < AllTheDom.length; i++) {
+                var CSSBits = window.getComputedStyle(AllTheDom[i]);
+                for (var CSSProp in CSSBits) {
+                    try {
+                        if (CSSBits[CSSProp] && CSSBits[CSSProp].indexOf && CSSBits[CSSProp].indexOf("rgb(") != -1 && CSSBits[CSSProp].length < 90) {
+                            var ColorProp = CSSBits[CSSProp];
+                            var cols = processCSSRGB(ColorProp);
+                            if ((cols.r + cols.g + cols.b) != 765 || (cols.r + cols.g + cols.b) != 0) {
+                                var fixed_ones = colMagic(cols.r, cols.g, cols.b);
+                                AllTheDom[i].setAttribute('style', AllTheDom[i].getAttribute("style") + ";" + CSSProp + ": rgb(" + fixed_ones.r + "," + fixed_ones.g + "," + fixed_ones.b + ");");
+                            }
+                        }
+                    } catch (e) {}
+                }
+            }
         }
     }, 10);
 });
