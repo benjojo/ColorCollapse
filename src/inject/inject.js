@@ -176,7 +176,7 @@ chrome.extension.sendMessage({}, function(response) {
                         if (CSSBits[CSSProp] && CSSBits[CSSProp].indexOf && CSSBits[CSSProp].indexOf("rgb(") != -1 && CSSBits[CSSProp].length < 90) {
                             var ColorProp = CSSBits[CSSProp];
                             var cols = processCSSRGB(ColorProp);
-                            if ((cols.r + cols.g + cols.b) != 765 || (cols.r + cols.g + cols.b) != 0) {
+                            if ((cols.r + cols.g + cols.b) != 765 && (cols.r + cols.g + cols.b) != 0) {
                                 var fixed_ones = colMagic(cols.r, cols.g, cols.b);
                                 AllTheDom[i].setAttribute('style', AllTheDom[i].getAttribute("style") + ";" + CSSProp + ": rgb(" + fixed_ones.r + "," + fixed_ones.g + "," + fixed_ones.b + ");");
                             }
