@@ -86,21 +86,23 @@ chrome.extension.sendMessage({}, function(response) {
             console.log("Processed all images");
             // Now to rewrite CSS!
             var AllTheDom = window.document.getElementsByTagName("*");
-            for (var i = 0; i < AllTheDom.length; i++) {
-                var CSSBits = window.getComputedStyle(AllTheDom[i]);
-                for (var CSSProp in CSSBits) {
-                    try {
-                        if (CSSBits[CSSProp] && CSSBits[CSSProp].indexOf && CSSBits[CSSProp].indexOf("rgb(") != -1 && CSSBits[CSSProp].length < 90) {
-                            var ColorProp = CSSBits[CSSProp];
-                            var cols = processCSSRGB(ColorProp);
-                            if ((cols.r + cols.g + cols.b) != 765 && (cols.r + cols.g + cols.b) != 0) {
-                                var fixed_ones = colMagic(cols.r, cols.g, cols.b);
-                                AllTheDom[i].setAttribute('style', AllTheDom[i].getAttribute("style") + ";" + CSSProp + ": rgb(" + fixed_ones.r + "," + fixed_ones.g + "," + fixed_ones.b + ");");
+            _.forEach(AllTheDom, function(node) {
+                _.defer(function(dom) {
+                    var CSSBits = window.getComputedStyle(dom);
+                    for (var CSSProp in CSSBits) {
+                        try {
+                            if (CSSBits[CSSProp] && CSSBits[CSSProp].indexOf && CSSBits[CSSProp].indexOf("rgb(") != -1 && CSSBits[CSSProp].length < 90) {
+                                var ColorProp = CSSBits[CSSProp];
+                                var cols = processCSSRGB(ColorProp);
+                                if ((cols.r + cols.g + cols.b) != 765 && (cols.r + cols.g + cols.b) != 0) {
+                                    var fixed_ones = colMagic(cols.r, cols.g, cols.b);
+                                    dom.setAttribute('style', dom.getAttribute("style") + ";" + CSSProp + ": rgb(" + fixed_ones.r + "," + fixed_ones.g + "," + fixed_ones.b + ");");
+                                }
                             }
-                        }
-                    } catch (e) {}
-                }
-            }
+                        } catch (e) {}
+                    }
+                }, node);
+            })
         }
     }, 10);
 });
