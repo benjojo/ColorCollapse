@@ -91,7 +91,13 @@ chrome.extension.sendMessage({}, function(response) {
                     var CSSBits = window.getComputedStyle(dom);
                     for (var CSSProp in CSSBits) {
                         try {
-                            if (CSSBits[CSSProp] && CSSBits[CSSProp].indexOf && CSSBits[CSSProp].indexOf("rgb(") != -1 && CSSBits[CSSProp].length < 90) {
+                            if (CSSBits[CSSProp] &&
+                                CSSBits[CSSProp].indexOf &&
+                                CSSBits[CSSProp].indexOf("rgb(") !== -1 &&
+                                CSSBits[CSSProp].length < 90 &&
+                                CSSProp.indexOf("webkit") === -1 &&
+                                CSSProp.indexOf("border") === -1
+                            ) {
                                 var ColorProp = CSSBits[CSSProp];
                                 var cols = processCSSRGB(ColorProp);
                                 if ((cols.r + cols.g + cols.b) != 765 && (cols.r + cols.g + cols.b) != 0) {
