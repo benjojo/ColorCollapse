@@ -1,0 +1,3 @@
+[submodule "src/inject/labcoljs"]
+	path = src/inject/labcoljs
+	url = git@github.com:benjojo/labcol.js.git
