@@ -72,7 +72,7 @@ chrome.extension.sendMessage({}, function(response) {
                 var ctx = canvas.getContext("2d");
                 ctx.drawImage(imgElement, 0, 0);
 
-                var map = ctx.getImageData(0, 0, 320, 240);
+                var map = ctx.getImageData(0, 0, canvas.width, canvas.height);
                 var imdata = map.data;
 
                 // convert image to grayscale
