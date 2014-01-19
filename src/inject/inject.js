@@ -1,3 +1,40 @@
+function ProcessDom() {
+    var AllTheDom = window.document.getElementsByTagName("*");
+    _.forEach(AllTheDom, function(node) {
+        _.defer(function(dom) {
+            if((dom.getAttribute("class") + "").indexOf("ColCollapse_PROCESSED") === -1) {
+                var CSSBits = window.getComputedStyle(dom);
+                for (var CSSProp in CSSBits) {
+                    try {
+                        if (CSSBits[CSSProp] &&
+                            CSSBits[CSSProp].indexOf &&
+                            CSSBits[CSSProp].indexOf("rgb(") !== -1 &&
+                            CSSBits[CSSProp].length < 90 &&
+                            CSSProp.indexOf("webkit") === -1 &&
+                            CSSProp.indexOf("border") === -1
+                        ) {
+                            var ColorProp = CSSBits[CSSProp];
+                            var cols = processCSSRGB(ColorProp);
+                            if ((cols.r + cols.g + cols.b) != 765 && (cols.r + cols.g + cols.b) != 0) {
+                                var fixed_ones = colMagic(cols.r, cols.g, cols.b);
+                                dom.setAttribute('style', dom.getAttribute("style") + ";" + CSSProp + ": rgb(" + fixed_ones.r + "," + fixed_ones.g + "," + fixed_ones.b + ");");
+                            }
+                        }
+                    } catch (e) {}
+                }
+                dom.setAttribute('class', dom.getAttribute("class") + " ColCollapse_PROCESSED"); // Tag that node as processed.
+                // So it won't be done again.
+            }
+        }, node);
+    });
+    if(!TimerRunning) {
+        setInterval(ProcessDom, 10*1000);
+        TimerRunning = true;
+    }
+}
+
+var TimerRunning = false;
+
 function processCSSRGB(inp) {
     // expecting rgb(17, 68, 119) 
     // or 0px none rgb(17, 68, 119)
@@ -85,32 +122,7 @@ chrome.extension.sendMessage({}, function(response) {
 
             console.log("Processed all images");
             // Now to rewrite CSS!
-            var AllTheDom = window.document.getElementsByTagName("*");
-            _.forEach(AllTheDom, function(node) {
-                _.defer(function(dom) {
-                    var CSSBits = window.getComputedStyle(dom);
-                    for (var CSSProp in CSSBits) {
-                        try {
-                            if (CSSBits[CSSProp] &&
-                                CSSBits[CSSProp].indexOf &&
-                                CSSBits[CSSProp].indexOf("rgb(") !== -1 &&
-                                CSSBits[CSSProp].length < 90 &&
-                                CSSProp.indexOf("webkit") === -1 &&
-                                CSSProp.indexOf("border") === -1
-                            ) {
-                                var ColorProp = CSSBits[CSSProp];
-                                var cols = processCSSRGB(ColorProp);
-                                if ((cols.r + cols.g + cols.b) != 765 && (cols.r + cols.g + cols.b) != 0) {
-                                    var fixed_ones = colMagic(cols.r, cols.g, cols.b);
-                                    dom.setAttribute('style', dom.getAttribute("style") + ";" + CSSProp + ": rgb(" + fixed_ones.r + "," + fixed_ones.g + "," + fixed_ones.b + ");");
-                                }
-                            }
-                        } catch (e) {}
-                    }
-                    dom.setAttribute('class', dom.getAttribute("class") + " ColCollapse_PROCESSED"); // Tag that node as processed.
-                    // So it won't be done again.
-                }, node);
-            })
+            ProcessDom();
         }
     }, 10);
 });
