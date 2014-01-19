@@ -2,7 +2,7 @@ function ProcessDom() {
     var AllTheDom = window.document.getElementsByTagName("*");
     _.forEach(AllTheDom, function(node) {
         _.defer(function(dom) {
-            if((dom.getAttribute("class") + "").indexOf("ColCollapse_PROCESSED") === -1) {
+            if ((dom.getAttribute("class") + "").indexOf("ColCollapse_PROCESSED") === -1) {
                 var CSSBits = window.getComputedStyle(dom);
                 for (var CSSProp in CSSBits) {
                     try {
@@ -27,8 +27,8 @@ function ProcessDom() {
             }
         }, node);
     });
-    if(!TimerRunning) {
-        setInterval(ProcessDom, 10*1000);
+    if (!TimerRunning) {
+        setInterval(ProcessDom, 10 * 1000);
         TimerRunning = true;
     }
 }
