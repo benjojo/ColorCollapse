@@ -2,7 +2,7 @@ function ProcessDom() {
     var AllTheDom = window.document.getElementsByTagName("*");
     _.forEach(AllTheDom, function(node) {
         _.defer(function(dom) {
-            if ((dom.getAttribute("class") + "").indexOf("ColCollapse_PROCESSED") === -1) {
+            if (dom.tagName != "A" && (dom.getAttribute("class") + "").indexOf("ColCollapse_PROCESSED") === -1) {
                 var CSSBits = window.getComputedStyle(dom);
                 for (var CSSProp in CSSBits) {
                     try {
@@ -12,6 +12,7 @@ function ProcessDom() {
                             CSSBits[CSSProp].length < 90 &&
                             CSSProp.indexOf("webkit") === -1 &&
                             CSSProp.indexOf("border") === -1
+
                         ) {
                             var ColorProp = CSSBits[CSSProp];
                             var cols = processCSSRGB(ColorProp);
