@@ -107,7 +107,7 @@ chrome.extension.sendMessage({}, function(response) {
                             }
                         } catch (e) {}
                     }
-                    dom.setAttribute('class', dom.getAttribute("style") + " ColCollapse_PROCESSED"); // Tag that node as processed.
+                    dom.setAttribute('class', dom.getAttribute("class") + " ColCollapse_PROCESSED"); // Tag that node as processed.
                     // So it won't be done again.
                 }, node);
             })
