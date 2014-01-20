@@ -63,7 +63,7 @@ chrome.extension.sendMessage({}, function(response) {
         if (document.readyState === "complete") {
             clearInterval(readyStateCheckInterval);
 
-            function processImg(imgElement, tintColor) {
+            function processImg(imgElement) {
                 // create hidden canvas (using image dimensions)
                 var canvas = document.createElement("canvas");
                 canvas.width = imgElement.offsetWidth;
@@ -105,7 +105,7 @@ chrome.extension.sendMessage({}, function(response) {
                 if (ary.length > ptr) {
                     console.log(ary[ptr]);
                     try {
-                        processImg(ary[ptr], '#000000');
+                        processImg(ary[ptr]);
                     } catch (e) {
                         console.log(e);
                     }
