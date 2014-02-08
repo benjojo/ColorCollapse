@@ -19,7 +19,7 @@
             "https://*/*"
         ],
         "js": [
-            "src/inject/lodash.min.js",
+            "src/libs/lodash.min.js",
             "src/inject/labcoljs/col.js",
             "src/inject/inject.js"
         ]
