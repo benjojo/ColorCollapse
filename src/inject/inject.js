@@ -106,16 +106,15 @@ function processImg( imgElement )
 
 function deferImage(ary, ptr)
 {
-    console.log( ary.length, ptr );
     if ( ary.length <= ptr ) {
-        console.log("Processed all images");
+        console.info("Processed all images");
         return
     }
-    console.log( ary[ ptr ]);
+    console.log( ptr, '/', ary.length, ary[ ptr ].src );
     try {
         processImg( ary[ ptr ] );
     } catch (e) {
-        console.log(e);
+        console.error(e);
     }
 
     setTimeout(function() {
