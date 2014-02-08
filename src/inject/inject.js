@@ -22,17 +22,19 @@ function processCSSRule( ruleName, __, rules )
 }
 function processNode(node)
 {
-    if ( node.tagName === "A" || ( node.getAttribute("class") + "" ).indexOf("ColCollapse_PROCESSED") !== -1 )
-        return;
-    _.forEach( window.getComputedStyle( node ), processCSSRule, node );
-    node.setAttribute( 'class', node.getAttribute("class") + " ColCollapse_PROCESSED" ); // Tag that node as processed.
-    // So it won't be done again.
+    // We don't process links because of issue #9
+    if ( node.tagName !== "A" ) {
+        _.forEach( window.getComputedStyle( node ), processCSSRule, node );
+    }
+    // Prevent this node being selected again
+    node.classList.add('ColCollapse_PROCESSED');
 }
 function processDOM()
 {
-    _.forEach( document.getElementsByTagName("*"), function( node ) {
+    _.forEach( document.querySelectorAll("*:not(.ColCollapse_PROCESSED)"), function( node ) {
         _.defer( processNode, node );
     });
+
     if ( ! timerRunning ) {
         setInterval( processDOM, 10 * 1000 );
         timerRunning = true;
