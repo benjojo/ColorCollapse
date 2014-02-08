@@ -97,7 +97,7 @@ function processImg(imgElement) {
 }
 
 function DoImg(ary, ptr) {
-    console.log(ary[ptr], ary.length, ptr);
+    console.log(ary.length, ptr);
     if (ary.length <= ptr) {
         console.log("Processed all images");
         return
