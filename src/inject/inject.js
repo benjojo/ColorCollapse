@@ -1,7 +1,7 @@
-function processCSSRule(ruleName, __, rules)
+function processCSSRule( ruleName, __, rules )
 {
     try {
-        rule = rules[ruleName];
+        rule = rules[ ruleName ];
         if (rule &&
             rule.indexOf &&
             rule.indexOf("rgb(") !== -1 &&
@@ -10,41 +10,42 @@ function processCSSRule(ruleName, __, rules)
             ruleName.indexOf("border") === -1
 
         ) {
-            var ColorProp = rule;
-            var cols = processCSSRGB(ColorProp);
-            if ((cols.r + cols.g + cols.b) != 765 && (cols.r + cols.g + cols.b) != 0) {
-                var fixed_ones = colMagic(cols.r, cols.g, cols.b);
-                this.setAttribute('style', this.getAttribute("style") + ";" + ruleName + ": rgb(" + fixed_ones.r + "," + fixed_ones.g + "," + fixed_ones.b + ");");
+            var cols = processCSSRGB( rule );
+            if ( ( cols.r + cols.g + cols.b ) != 765 && ( cols.r + cols.g + cols.b ) != 0 ) {
+                var fixed_ones = colMagic( cols.r, cols.g, cols.b );
+                this.setAttribute( 'style', this.getAttribute("style") + ";" + ruleName + ": rgb(" + fixed_ones.r + "," + fixed_ones.g + "," + fixed_ones.b + ");" );
             }
         }
-    } catch (e) {console.error(e);}
-
+    } catch (e) {
+        console.error(e);
+    }
 }
-function processNode(dom)
+function processNode(node)
 {
-    if ( ! (dom.tagName != "A" && (dom.getAttribute("class") + "").indexOf("ColCollapse_PROCESSED") === -1) )
+    if ( node.tagName === "A" || ( node.getAttribute("class") + "" ).indexOf("ColCollapse_PROCESSED") !== -1 )
         return;
-    _.forEach( window.getComputedStyle(dom), processCSSRule, dom );
-    dom.setAttribute('class', dom.getAttribute("class") + " ColCollapse_PROCESSED"); // Tag that node as processed.
+    _.forEach( window.getComputedStyle( node ), processCSSRule, node );
+    node.setAttribute( 'class', node.getAttribute("class") + " ColCollapse_PROCESSED" ); // Tag that node as processed.
     // So it won't be done again.
 }
-function ProcessDom() {
-    var AllTheDom = window.document.getElementsByTagName("*");
-    _.forEach(AllTheDom, function(node) {
-        _.defer(processNode, node);
+function processDOM()
+{
+    _.forEach( document.getElementsByTagName("*"), function( node ) {
+        _.defer( processNode, node );
     });
-    if (!TimerRunning) {
-        setInterval(ProcessDom, 10 * 1000);
-        TimerRunning = true;
+    if ( ! timerRunning ) {
+        setInterval( processDOM, 10 * 1000 );
+        timerRunning = true;
     }
 }
 
-var TimerRunning = false;
+var timerRunning = false;
 
-function processCSSRGB(inp) {
+function processCSSRGB( inp )
+{
     // expecting rgb(17, 68, 119) 
     // or 0px none rgb(17, 68, 119)
-    var bitsofrgb = inp.split("(")[1].split(",");
+    var bitsofrgb = inp.split( "(" )[1].split( "," );
 
     return {
         r: parseInt( bitsofrgb[0], 10 ),
@@ -53,16 +54,18 @@ function processCSSRGB(inp) {
     };
 }
 
-function colMagic(r, g, b) {
+function colMagic(r, g, b)
+{
     var x = new labcol();
-    var labpx = x.RGBtoLab(r, g, b);
-    var res = (labpx.a + labpx.b) / 2;
+    var labpx = x.RGBtoLab( r, g, b );
+    var res = ( labpx.a + labpx.b ) / 2;
     labpx.a = res;
     labpx.b = res;
 
-    return x.LabtoRGB(labpx.l, labpx.a, labpx.b);
+    return x.LabtoRGB( labpx.l, labpx.a, labpx.b );
 }
-function processImg(imgElement) {
+function processImg( imgElement )
+{
     // create hidden canvas (using image dimensions)
     var canvas = document.createElement("canvas");
     canvas.width = imgElement.offsetWidth;
@@ -99,30 +102,31 @@ function processImg(imgElement) {
     }
 }
 
-function DoImg(ary, ptr) {
-    console.log(ary.length, ptr);
-    if (ary.length <= ptr) {
+function deferImage(ary, ptr)
+{
+    console.log( ary.length, ptr );
+    if ( ary.length <= ptr ) {
         console.log("Processed all images");
         return
     }
-    console.log(ary[ptr]);
+    console.log( ary[ ptr ]);
     try {
-        processImg(ary[ptr]);
+        processImg( ary[ ptr ] );
     } catch (e) {
         console.log(e);
     }
 
     setTimeout(function() {
-        DoImg(ary, ptr + 1);
+        deferImage( ary, ptr + 1 );
     }, 10);
 }
 
 // The DOM has already loaded - let's make hay while the sun shines!
-ProcessDom();
+processDOM();
 // Images not so much. Let's wait until they're done.
 window.addEventListener('load', function()
 {
     var imgtags = document.getElementsByTagName('img');
-    var besttags = _.uniq(imgtags, false, 'src');
-    DoImg(besttags, 0)
+    var besttags = _.uniq( imgtags, false, 'src' );
+    deferImage( besttags, 0 )
 })
