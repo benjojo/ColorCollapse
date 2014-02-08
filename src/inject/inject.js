@@ -4,6 +4,20 @@
 // (c) Ben Cartwright Cox 2013-2014
 // (c) Lex Robinson 2014
 //
+
+/*
+Regexp explanation for people who can't regex:
+(.*)    // Greedily captures everything until the last rgb() (including any additional rgb() statements)
+rgb\(   // Matches the !LAST! instance of rgb(
+(\d+)   // Captures one or more digits
+,\s     // Matches a comma and a space
+(\d+)
+,\s
+(\d+)
+\)      // Matches the Closing )
+(.*)    // Greedily captures everything after the rgb()
+*/
+var rgbRegex = /(.*)rgb\((\d+),\s(\d+),\s(\d+)\)(.*)/;
 function processCSSRule( ruleName, __, rules )
 {
     try {
@@ -12,15 +26,18 @@ function processCSSRule( ruleName, __, rules )
             rule.indexOf &&
             rule.indexOf("rgb(") !== -1 &&
             rule.length < 90 &&
-            ruleName.indexOf("webkit") === -1 &&
-            ruleName.indexOf("border") === -1
-
+            ruleName.indexOf("webkit") === -1
         ) {
-            var cols = processCSSRGB( rule );
-            if ( ( cols.r + cols.g + cols.b ) != 765 && ( cols.r + cols.g + cols.b ) != 0 ) {
-                var fixed_ones = colMagic( cols.r, cols.g, cols.b );
-                this.setAttribute( 'style', this.getAttribute("style") + ";" + ruleName + ": rgb(" + fixed_ones.r + "," + fixed_ones.g + "," + fixed_ones.b + ");" );
-            }
+            var ruledata = rule.match( rgbRegex );
+            var r,g,b;
+            r = parseInt( ruledata[2], 10 );
+            g = parseInt( ruledata[3], 10 );
+            b = parseInt( ruledata[4], 10 );
+            // brief sanity check
+            if ( r === b && b === g && ( r === 255 || r === 0 )  )
+                return;
+            var collapsed = colMagic( r, g, b );
+            this.style[ ruleName ] = ruledata[1] + 'rgb(' + collapsed.r + ',' + collapsed.g + ',' + collapsed.b + ')' + ruledata[5];
         }
     } catch (e) {
         console.error(e);
@@ -48,19 +65,6 @@ function processDOM()
 }
 
 var timerRunning = false;
-
-function processCSSRGB( inp )
-{
-    // expecting rgb(17, 68, 119) 
-    // or 0px none rgb(17, 68, 119)
-    var bitsofrgb = inp.split( "(" )[1].split( "," );
-
-    return {
-        r: parseInt( bitsofrgb[0], 10 ),
-        g: parseInt( bitsofrgb[1], 10 ),
-        b: parseInt( bitsofrgb[2], 10 )
-    };
-}
 
 function colMagic(r, g, b)
 {
