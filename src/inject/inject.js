@@ -117,19 +117,14 @@ function DoImg(ary, ptr) {
     }, 10);
 }
 
-chrome.extension.sendMessage({}, function(response) {
-    var readyStateCheckInterval = setInterval(function() {
-        if (document.readyState !== "complete")
-            return;
-        clearInterval(readyStateCheckInterval);
-
-        var imgtags = document.getElementsByTagName('img');
-        var besttags = _.uniq(imgtags, false, function(a) {
-            return a.src
-        });
-        DoImg(besttags, 0)
-
-        // Now to rewrite CSS!
-        ProcessDom();
-    }, 10);
-});
+// The DOM has already loaded - let's make hay while the sun shines!
+ProcessDom();
+// Images not so much. Let's wait until they're done.
+window.addEventListener('load', function()
+{
+    var imgtags = document.getElementsByTagName('img');
+    var besttags = _.uniq(imgtags, false, function(a) {
+        return a.src
+    });
+    DoImg(besttags, 0)
+})
