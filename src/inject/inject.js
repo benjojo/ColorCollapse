@@ -1,3 +1,9 @@
+//
+// Color Collapse
+// Content Script for Chrome Extension
+// (c) Ben Cartwright Cox 2013-2014
+// (c) Lex Robinson 2014
+//
 function processCSSRule( ruleName, __, rules )
 {
     try {
