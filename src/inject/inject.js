@@ -47,9 +47,9 @@ function processCSSRGB(inp) {
     var bitsofrgb = inp.split("(")[1].split(",");
 
     return {
-        r: parseInt(bitsofrgb[0]),
-        g: parseInt(bitsofrgb[1]),
-        b: parseInt(bitsofrgb[2])
+        r: parseInt( bitsofrgb[0], 10 ),
+        g: parseInt( bitsofrgb[1], 10 ),
+        b: parseInt( bitsofrgb[2], 10 )
     };
 }
 
