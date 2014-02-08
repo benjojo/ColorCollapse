@@ -1,65 +1,71 @@
-function processNode(dom)
+function processCSSRule( ruleName, __, rules )
 {
-    if ( ! (dom.tagName != "A" && (dom.getAttribute("class") + "").indexOf("ColCollapse_PROCESSED") === -1) )
-        return;
-    var CSSBits = window.getComputedStyle(dom);
-    for (var CSSProp in CSSBits) {
-        try {
-            if (CSSBits[CSSProp] &&
-                CSSBits[CSSProp].indexOf &&
-                CSSBits[CSSProp].indexOf("rgb(") !== -1 &&
-                CSSBits[CSSProp].length < 90 &&
-                CSSProp.indexOf("webkit") === -1 &&
-                CSSProp.indexOf("border") === -1
+    try {
+        rule = rules[ ruleName ];
+        if (rule &&
+            rule.indexOf &&
+            rule.indexOf("rgb(") !== -1 &&
+            rule.length < 90 &&
+            ruleName.indexOf("webkit") === -1 &&
+            ruleName.indexOf("border") === -1
 
-            ) {
-                var ColorProp = CSSBits[CSSProp];
-                var cols = processCSSRGB(ColorProp);
-                if ((cols.r + cols.g + cols.b) != 765 && (cols.r + cols.g + cols.b) != 0) {
-                    var fixed_ones = colMagic(cols.r, cols.g, cols.b);
-                    dom.setAttribute('style', dom.getAttribute("style") + ";" + CSSProp + ": rgb(" + fixed_ones.r + "," + fixed_ones.g + "," + fixed_ones.b + ");");
-                }
+        ) {
+            var cols = processCSSRGB( rule );
+            if ( ( cols.r + cols.g + cols.b ) != 765 && ( cols.r + cols.g + cols.b ) != 0 ) {
+                var fixed_ones = colMagic( cols.r, cols.g, cols.b );
+                this.setAttribute( 'style', this.getAttribute("style") + ";" + ruleName + ": rgb(" + fixed_ones.r + "," + fixed_ones.g + "," + fixed_ones.b + ");" );
             }
-        } catch (e) {}
+        }
+    } catch (e) {
+        console.error(e);
     }
-    dom.setAttribute('class', dom.getAttribute("class") + " ColCollapse_PROCESSED"); // Tag that node as processed.
+}
+function processNode(node)
+{
+    if ( node.tagName === "A" || ( node.getAttribute("class") + "" ).indexOf("ColCollapse_PROCESSED") !== -1 )
+        return;
+    _.forEach( window.getComputedStyle( node ), processCSSRule, node );
+    node.setAttribute( 'class', node.getAttribute("class") + " ColCollapse_PROCESSED" ); // Tag that node as processed.
     // So it won't be done again.
 }
-function ProcessDom() {
-    var AllTheDom = window.document.getElementsByTagName("*");
-    _.forEach(AllTheDom, function(node) {
-        _.defer(processNode, node);
+function processDOM()
+{
+    _.forEach( document.getElementsByTagName("*"), function( node ) {
+        _.defer( processNode, node );
     });
-    if (!TimerRunning) {
-        setInterval(ProcessDom, 10 * 1000);
-        TimerRunning = true;
+    if ( ! timerRunning ) {
+        setInterval( processDOM, 10 * 1000 );
+        timerRunning = true;
     }
 }
 
-var TimerRunning = false;
+var timerRunning = false;
 
-function processCSSRGB(inp) {
+function processCSSRGB( inp )
+{
     // expecting rgb(17, 68, 119) 
     // or 0px none rgb(17, 68, 119)
-    var bitsofrgb = inp.split("(")[1].split(",");
+    var bitsofrgb = inp.split( "(" )[1].split( "," );
 
     return {
-        r: parseInt(bitsofrgb[0]),
-        g: parseInt(bitsofrgb[1]),
-        b: parseInt(bitsofrgb[2])
+        r: parseInt( bitsofrgb[0], 10 ),
+        g: parseInt( bitsofrgb[1], 10 ),
+        b: parseInt( bitsofrgb[2], 10 )
     };
 }
 
-function colMagic(r, g, b) {
+function colMagic(r, g, b)
+{
     var x = new labcol();
-    var labpx = x.RGBtoLab(r, g, b);
-    var res = (labpx.a + labpx.b) / 2;
+    var labpx = x.RGBtoLab( r, g, b );
+    var res = ( labpx.a + labpx.b ) / 2;
     labpx.a = res;
     labpx.b = res;
 
-    return x.LabtoRGB(labpx.l, labpx.a, labpx.b);
+    return x.LabtoRGB( labpx.l, labpx.a, labpx.b );
 }
-function processImg(imgElement) {
+function processImg( imgElement )
+{
     // create hidden canvas (using image dimensions)
     var canvas = document.createElement("canvas");
     canvas.width = imgElement.offsetWidth;
@@ -96,37 +102,31 @@ function processImg(imgElement) {
     }
 }
 
-function DoImg(ary, ptr) {
-    console.log(ary[ptr], ary.length, ptr);
-    if (ary.length <= ptr) {
+function deferImage(ary, ptr)
+{
+    console.log( ary.length, ptr );
+    if ( ary.length <= ptr ) {
         console.log("Processed all images");
         return
     }
-    console.log(ary[ptr]);
+    console.log( ary[ ptr ]);
     try {
-        processImg(ary[ptr]);
+        processImg( ary[ ptr ] );
     } catch (e) {
         console.log(e);
     }
 
     setTimeout(function() {
-        DoImg(ary, ptr + 1);
+        deferImage( ary, ptr + 1 );
     }, 10);
 }
 
-chrome.extension.sendMessage({}, function(response) {
-    var readyStateCheckInterval = setInterval(function() {
-        if (document.readyState !== "complete")
-            return;
-        clearInterval(readyStateCheckInterval);
-
-        var imgtags = document.getElementsByTagName('img');
-        var besttags = _.uniq(imgtags, false, function(a) {
-            return a.src
-        });
-        DoImg(besttags, 0)
-
-        // Now to rewrite CSS!
-        ProcessDom();
-    }, 10);
-});
+// The DOM has already loaded - let's make hay while the sun shines!
+processDOM();
+// Images not so much. Let's wait until they're done.
+window.addEventListener('load', function()
+{
+    var imgtags = document.getElementsByTagName('img');
+    var besttags = _.uniq( imgtags, false, 'src' );
+    deferImage( besttags, 0 )
+})
