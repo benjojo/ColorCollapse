@@ -1,27 +1,30 @@
+function processCSSRule(ruleName, __, rules)
+{
+    try {
+        rule = rules[ruleName];
+        if (rule &&
+            rule.indexOf &&
+            rule.indexOf("rgb(") !== -1 &&
+            rule.length < 90 &&
+            ruleName.indexOf("webkit") === -1 &&
+            ruleName.indexOf("border") === -1
+
+        ) {
+            var ColorProp = rule;
+            var cols = processCSSRGB(ColorProp);
+            if ((cols.r + cols.g + cols.b) != 765 && (cols.r + cols.g + cols.b) != 0) {
+                var fixed_ones = colMagic(cols.r, cols.g, cols.b);
+                this.setAttribute('style', this.getAttribute("style") + ";" + ruleName + ": rgb(" + fixed_ones.r + "," + fixed_ones.g + "," + fixed_ones.b + ");");
+            }
+        }
+    } catch (e) {console.error(e);}
+
+}
 function processNode(dom)
 {
     if ( ! (dom.tagName != "A" && (dom.getAttribute("class") + "").indexOf("ColCollapse_PROCESSED") === -1) )
         return;
-    var CSSBits = window.getComputedStyle(dom);
-    for (var CSSProp in CSSBits) {
-        try {
-            if (CSSBits[CSSProp] &&
-                CSSBits[CSSProp].indexOf &&
-                CSSBits[CSSProp].indexOf("rgb(") !== -1 &&
-                CSSBits[CSSProp].length < 90 &&
-                CSSProp.indexOf("webkit") === -1 &&
-                CSSProp.indexOf("border") === -1
-
-            ) {
-                var ColorProp = CSSBits[CSSProp];
-                var cols = processCSSRGB(ColorProp);
-                if ((cols.r + cols.g + cols.b) != 765 && (cols.r + cols.g + cols.b) != 0) {
-                    var fixed_ones = colMagic(cols.r, cols.g, cols.b);
-                    dom.setAttribute('style', dom.getAttribute("style") + ";" + CSSProp + ": rgb(" + fixed_ones.r + "," + fixed_ones.g + "," + fixed_ones.b + ");");
-                }
-            }
-        } catch (e) {}
-    }
+    _.forEach( window.getComputedStyle(dom), processCSSRule, dom );
     dom.setAttribute('class', dom.getAttribute("class") + " ColCollapse_PROCESSED"); // Tag that node as processed.
     // So it won't be done again.
 }
