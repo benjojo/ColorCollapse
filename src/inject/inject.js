@@ -120,13 +120,17 @@ function deferImage(ary, ptr)
         deferImage( ary, ptr + 1 );
     }, 10);
 }
+function processImages()
+{
+    var imgtags = document.getElementsByTagName('img');
+    var besttags = _.uniq( imgtags, false, 'src' );
+    deferImage( besttags, 0 )    
+}
 
 // The DOM has already loaded - let's make hay while the sun shines!
 processDOM();
 // Images not so much. Let's wait until they're done.
-window.addEventListener('load', function()
-{
-    var imgtags = document.getElementsByTagName('img');
-    var besttags = _.uniq( imgtags, false, 'src' );
-    deferImage( besttags, 0 )
-})
+if ( document.readyState !== 'complete' )
+    window.addEventListener( 'load', processImages );
+else
+    processImages();
