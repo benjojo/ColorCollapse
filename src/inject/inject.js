@@ -113,6 +113,8 @@ chrome.extension.sendMessage({}, function(response) {
                     setTimeout(function() {
                         DoImg(ary, ptr + 1);
                     }, 10);
+                } else {
+                    console.log("Processed all images");
                 }
             }
             var imgtags = document.getElementsByTagName('img');
@@ -121,7 +123,6 @@ chrome.extension.sendMessage({}, function(response) {
             });
             DoImg(besttags, 0)
 
-            console.log("Processed all images");
             // Now to rewrite CSS!
             ProcessDom();
         }
