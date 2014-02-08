@@ -1,6 +1,7 @@
 //
 // Color Collapse
 // Content Script for Chrome Extension
+// (c) Kyle Bloss 2013
 // (c) Ben Cartwright Cox 2013-2014
 // (c) Lex Robinson 2014
 //
