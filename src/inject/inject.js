@@ -123,8 +123,6 @@ ProcessDom();
 window.addEventListener('load', function()
 {
     var imgtags = document.getElementsByTagName('img');
-    var besttags = _.uniq(imgtags, false, function(a) {
-        return a.src
-    });
+    var besttags = _.uniq(imgtags, false, 'src');
     DoImg(besttags, 0)
 })
