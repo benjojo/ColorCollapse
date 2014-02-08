@@ -49,14 +49,7 @@ function processDOM()
     _.forEach( document.querySelectorAll("*:not(.ColCollapse_PROCESSED)"), function( node ) {
         _.defer( processNode, node );
     });
-
-    if ( ! timerRunning ) {
-        setInterval( processDOM, 10 * 1000 );
-        timerRunning = true;
-    }
 }
-
-var timerRunning = false;
 
 function colMagic(r, g, b)
 {
@@ -132,6 +125,7 @@ function processImages()
 
 // The DOM has already loaded - let's make hay while the sun shines!
 processDOM();
+setInterval( processDOM, 10 * 1000 );
 // Images not so much. Let's wait until they're done.
 if ( document.readyState !== 'complete' )
     window.addEventListener( 'load', processImages );
