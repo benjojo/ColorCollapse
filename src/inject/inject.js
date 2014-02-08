@@ -5,18 +5,9 @@
 // (c) Lex Robinson 2014
 //
 
-/*
-Regexp explanation for people who can't regex:
-(.*)    // Greedily captures everything until the last rgb() (including any additional rgb() statements)
-rgb\(   // Matches the !LAST! instance of rgb(
-(\d+)   // Captures one or more digits
-,\s     // Matches a comma and a space
-(\d+)
-,\s
-(\d+)
-\)      // Matches the Closing )
-(.*)    // Greedily captures everything after the rgb()
-*/
+// Captures the entire line up until the !LAST! rgb() call, the digits within it and then the rest of the line after it.
+// Input: "linear-gradient(rgb(255, 255, 255), rgb(229, 238, 204) 100px)"
+// Output: ["linear-gradient(rgb(255, 255, 255), ", "229", "238", "204", " 100px)"]
 var rgbRegex = /(.*)rgb\((\d+),\s(\d+),\s(\d+)\)(.*)/;
 function processCSSRule( ruleName, __, rules )
 {
