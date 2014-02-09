@@ -1,3 +1,15 @@
+//
+// Color Collapse
+// Content Script for Chrome Extension
+// (c) Kyle Bloss 2013
+// (c) Ben Cartwright Cox 2013-2014
+// (c) Lex Robinson 2014
+//
+
+// Captures the entire line up until the !LAST! rgb() call, the digits within it and then the rest of the line after it.
+// Input: "linear-gradient(rgb(255, 255, 255), rgb(229, 238, 204) 100px)"
+// Output: ["linear-gradient(rgb(255, 255, 255), ", "229", "238", "204", " 100px)"]
+var rgbRegex = /(.*)rgb\((\d+),\s(\d+),\s(\d+)\)(.*)/;
 function processCSSRule( ruleName, __, rules )
 {
     try {
@@ -6,15 +18,18 @@ function processCSSRule( ruleName, __, rules )
             rule.indexOf &&
             rule.indexOf("rgb(") !== -1 &&
             rule.length < 90 &&
-            ruleName.indexOf("webkit") === -1 &&
-            ruleName.indexOf("border") === -1
-
+            ruleName.indexOf("webkit") === -1
         ) {
-            var cols = processCSSRGB( rule );
-            if ( ( cols.r + cols.g + cols.b ) != 765 && ( cols.r + cols.g + cols.b ) != 0 ) {
-                var fixed_ones = colMagic( cols.r, cols.g, cols.b );
-                this.setAttribute( 'style', this.getAttribute("style") + ";" + ruleName + ": rgb(" + fixed_ones.r + "," + fixed_ones.g + "," + fixed_ones.b + ");" );
-            }
+            var ruledata = rule.match( rgbRegex );
+            var r,g,b;
+            r = parseInt( ruledata[2], 10 );
+            g = parseInt( ruledata[3], 10 );
+            b = parseInt( ruledata[4], 10 );
+            // brief sanity check
+            if ( r === b && b === g && ( r === 255 || r === 0 )  )
+                return;
+            var collapsed = colMagic( r, g, b );
+            this.style[ ruleName ] = ruledata[1] + 'rgb(' + collapsed.r + ',' + collapsed.g + ',' + collapsed.b + ')' + ruledata[5];
         }
     } catch (e) {
         console.error(e);
@@ -22,36 +37,18 @@ function processCSSRule( ruleName, __, rules )
 }
 function processNode(node)
 {
-    if ( node.tagName === "A" || ( node.getAttribute("class") + "" ).indexOf("ColCollapse_PROCESSED") !== -1 )
-        return;
-    _.forEach( window.getComputedStyle( node ), processCSSRule, node );
-    node.setAttribute( 'class', node.getAttribute("class") + " ColCollapse_PROCESSED" ); // Tag that node as processed.
-    // So it won't be done again.
+    // We don't process links because of issue #9
+    if ( node.tagName !== "A" ) {
+        _.forEach( window.getComputedStyle( node ), processCSSRule, node );
+    }
+    // Prevent this node being selected again
+    node.classList.add('ColCollapse_PROCESSED');
 }
 function processDOM()
 {
-    _.forEach( document.getElementsByTagName("*"), function( node ) {
+    _.forEach( document.querySelectorAll("*:not(.ColCollapse_PROCESSED)"), function( node ) {
         _.defer( processNode, node );
     });
-    if ( ! timerRunning ) {
-        setInterval( processDOM, 10 * 1000 );
-        timerRunning = true;
-    }
-}
-
-var timerRunning = false;
-
-function processCSSRGB( inp )
-{
-    // expecting rgb(17, 68, 119) 
-    // or 0px none rgb(17, 68, 119)
-    var bitsofrgb = inp.split( "(" )[1].split( "," );
-
-    return {
-        r: parseInt( bitsofrgb[0], 10 ),
-        g: parseInt( bitsofrgb[1], 10 ),
-        b: parseInt( bitsofrgb[2], 10 )
-    };
 }
 
 function colMagic(r, g, b)
@@ -104,16 +101,15 @@ function processImg( imgElement )
 
 function deferImage(ary, ptr)
 {
-    console.log( ary.length, ptr );
     if ( ary.length <= ptr ) {
-        console.log("Processed all images");
+        console.info("Processed all images");
         return
     }
-    console.log( ary[ ptr ]);
+    console.log( ptr, '/', ary.length, ary[ ptr ].src );
     try {
         processImg( ary[ ptr ] );
     } catch (e) {
-        console.log(e);
+        console.error(e);
     }
 
     setTimeout(function() {
@@ -129,6 +125,7 @@ function processImages()
 
 // The DOM has already loaded - let's make hay while the sun shines!
 processDOM();
+setInterval( processDOM, 10 * 1000 );
 // Images not so much. Let's wait until they're done.
 if ( document.readyState !== 'complete' )
     window.addEventListener( 'load', processImages );
