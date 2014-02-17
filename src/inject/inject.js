@@ -10,59 +10,58 @@
 // Input: "linear-gradient(rgb(255, 255, 255), rgb(229, 238, 204) 100px)"
 // Output: ["linear-gradient(rgb(255, 255, 255), ", "229", "238", "204", " 100px)"]
 var rgbRegex = /(.*)rgb\((\d+),\s(\d+),\s(\d+)\)(.*)/;
-function processCSSRule( ruleName, __, rules )
-{
+
+function processCSSRule(ruleName, __, rules) {
     try {
-        rule = rules[ ruleName ];
+        rule = rules[ruleName];
         if (rule &&
             rule.indexOf &&
             rule.indexOf("rgb(") !== -1 &&
             rule.length < 90 &&
             ruleName.indexOf("webkit") === -1
         ) {
-            var ruledata = rule.match( rgbRegex );
-            var r,g,b;
-            r = parseInt( ruledata[2], 10 );
-            g = parseInt( ruledata[3], 10 );
-            b = parseInt( ruledata[4], 10 );
+            var ruledata = rule.match(rgbRegex);
+            var r, g, b;
+            r = parseInt(ruledata[2], 10);
+            g = parseInt(ruledata[3], 10);
+            b = parseInt(ruledata[4], 10);
             // brief sanity check
-            if ( r === b && b === g && ( r === 255 || r === 0 )  )
+            if (r === b && b === g && (r === 255 || r === 0))
                 return;
-            var collapsed = colMagic( r, g, b );
-            this.style[ ruleName ] = ruledata[1] + 'rgb(' + collapsed.r + ',' + collapsed.g + ',' + collapsed.b + ')' + ruledata[5];
+            var collapsed = colMagic(r, g, b);
+            this.style[ruleName] = ruledata[1] + 'rgb(' + collapsed.r + ',' + collapsed.g + ',' + collapsed.b + ')' + ruledata[5];
         }
     } catch (e) {
         console.error(e);
     }
 }
-function processNode(node)
-{
+
+function processNode(node) {
     // We don't process links because of issue #9
-    if ( node.tagName !== "A" ) {
-        _.forEach( window.getComputedStyle( node ), processCSSRule, node );
+    if (node.tagName !== "A") {
+        _.forEach(window.getComputedStyle(node), processCSSRule, node);
     }
     // Prevent this node being selected again
     node.classList.add('ColCollapse_PROCESSED');
 }
-function processDOM()
-{
-    _.forEach( document.querySelectorAll("*:not(.ColCollapse_PROCESSED)"), function( node ) {
-        _.defer( processNode, node );
+
+function processDOM() {
+    _.forEach(document.querySelectorAll("*:not(.ColCollapse_PROCESSED)"), function(node) {
+        _.defer(processNode, node);
     });
 }
 
-function colMagic(r, g, b)
-{
+function colMagic(r, g, b) {
     var x = new labcol();
-    var labpx = x.RGBtoLab( r, g, b );
-    var res = ( labpx.a + labpx.b ) / 2;
+    var labpx = x.RGBtoLab(r, g, b);
+    var res = (labpx.a + labpx.b) / 2;
     labpx.a = res;
     labpx.b = res;
 
-    return x.LabtoRGB( labpx.l, labpx.a, labpx.b );
+    return x.LabtoRGB(labpx.l, labpx.a, labpx.b);
 }
-function processImg( imgElement )
-{
+
+function processImg(imgElement) {
     // create hidden canvas (using image dimensions)
     var canvas = document.createElement("canvas");
     canvas.width = imgElement.offsetWidth;
@@ -99,35 +98,34 @@ function processImg( imgElement )
     }
 }
 
-function deferImage(ary, ptr)
-{
-    if ( ary.length <= ptr ) {
+function deferImage(ary, ptr) {
+    if (ary.length <= ptr) {
         console.info("Processed all images");
         return
     }
-    console.log( ptr, '/', ary.length, ary[ ptr ].src );
+    console.log(ptr, '/', ary.length, ary[ptr].src);
     try {
-        processImg( ary[ ptr ] );
+        processImg(ary[ptr]);
     } catch (e) {
         console.error(e);
     }
 
     setTimeout(function() {
-        deferImage( ary, ptr + 1 );
+        deferImage(ary, ptr + 1);
     }, 10);
 }
-function processImages()
-{
+
+function processImages() {
     var imgtags = document.getElementsByTagName('img');
-    var besttags = _.uniq( imgtags, false, 'src' );
-    deferImage( besttags, 0 )    
+    var besttags = _.uniq(imgtags, false, 'src');
+    deferImage(besttags, 0)
 }
 
 // The DOM has already loaded - let's make hay while the sun shines!
 processDOM();
-setInterval( processDOM, 10 * 1000 );
+setInterval(processDOM, 10 * 1000);
 // Images not so much. Let's wait until they're done.
-if ( document.readyState !== 'complete' )
-    window.addEventListener( 'load', processImages );
+if (document.readyState !== 'complete')
+    window.addEventListener('load', processImages);
 else
     processImages();
