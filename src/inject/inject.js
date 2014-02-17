@@ -50,14 +50,15 @@ function processDOM() {
     });
 }
 
+var magic = new labcol();
+
 function colMagic(r, g, b) {
-    var x = new labcol();
-    var labpx = x.RGBtoLab(r, g, b);
+    var labpx = magic.RGBtoLab(r, g, b);
     var res = (labpx.a + labpx.b) / 2;
     labpx.a = res;
     labpx.b = res;
 
-    return x.LabtoRGB(labpx.l, labpx.a, labpx.b);
+    return magic.LabtoRGB(labpx.l, labpx.a, labpx.b);
 }
 
 function processImg(imgElement) {
