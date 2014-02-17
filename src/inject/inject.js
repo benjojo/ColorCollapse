@@ -14,8 +14,7 @@ var rgbRegex = /(.*)rgb\((\d+),\s(\d+),\s(\d+)\)(.*)/;
 function processCSSRule(ruleName, __, rules) {
     try {
         rule = rules[ruleName];
-        if (rule &&
-            rule.indexOf &&
+        if (
             rule.indexOf("rgb(") !== -1 &&
             rule.length < 90 &&
             ruleName.indexOf("webkit") === -1
