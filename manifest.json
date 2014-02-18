@@ -20,7 +20,7 @@
         ],
         "js": [
             "src/libs/lodash.min.js",
-            "src/inject/labcoljs/col.js",
+            "src/libs/labcol.js/col.js",
             "src/inject/inject.js"
         ]
     }]
