@@ -22,6 +22,7 @@
             "src/libs/lodash.min.js",
             "src/libs/labcol.js/col.js",
             "src/shared/collapse.js",
+            "src/shared/images.js",
             "src/inject/inject.js"
         ]
     }]
