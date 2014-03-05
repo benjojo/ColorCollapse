@@ -27,7 +27,7 @@ function processCSSRule(ruleName, __, rules) {
             // brief sanity check
             if (r === b && b === g && (r === 255 || r === 0))
                 return;
-            var collapsed = colMagic(r, g, b);
+            var collapsed = colorCollapse(r, g, b);
             this.style[ruleName] = ruledata[1] + 'rgb(' + collapsed.r + ',' + collapsed.g + ',' + collapsed.b + ')' + ruledata[5];
         }
     } catch (e) {
@@ -50,17 +50,6 @@ function processDOM() {
     });
 }
 
-var magic = new labcol();
-
-function colMagic(r, g, b) {
-    var labpx = magic.RGBtoLab(r, g, b);
-    var res = (labpx.a + labpx.b) / 2;
-    labpx.a = res;
-    labpx.b = res;
-
-    return magic.LabtoRGB(labpx.l, labpx.a, labpx.b);
-}
-
 function processImg(imgElement) {
     // create hidden canvas (using image dimensions)
     var canvas = document.createElement("canvas");
@@ -81,7 +70,7 @@ function processImg(imgElement) {
         g = imdata[p + 1];
         b = imdata[p + 2];
         // alpha channel (p+3) is ignored
-        var rgb = colMagic(r, g, b)
+        var rgb = colorCollapse(r, g, b)
         imdata[p + 0] = rgb.r;
         imdata[p + 1] = rgb.g;
         imdata[p + 2] = rgb.b;
