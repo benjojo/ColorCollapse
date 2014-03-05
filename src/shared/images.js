@@ -1,5 +1,5 @@
 var collapseImage;
-(function(){
+(function() {
     'use strict';
 
     function processImg(imgElement) {
