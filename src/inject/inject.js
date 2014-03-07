@@ -10,6 +10,7 @@
 // Input: "linear-gradient(rgb(255, 255, 255), rgb(229, 238, 204) 100px)"
 // Output: ["linear-gradient(rgb(255, 255, 255), ", "229", "238", "204", " 100px)"]
 var rgbRegex = /(.*)rgb\((\d+),\s(\d+),\s(\d+)\)(.*)/;
+var port;
 
 function processCSSRule(ruleName, __, rules) {
     try {
@@ -61,7 +62,7 @@ function deferImage(ary, ptr) {
     // } catch (e) {
     //     console.error(e);
     // }
-    chrome.runtime.sendMessage({
+    port.postMessage({
         src: ary[ptr].src,
         imageRequest: true
     });
@@ -77,6 +78,22 @@ function processImages() {
     var besttags = _.uniq(imgtags, false, 'src');
     deferImage(besttags, 0)
 }
+
+port = chrome.runtime.connect({
+    name: "images"
+});
+port.onMessage.addListener(function(msg) {
+    console.info("Jazzhands", msg);
+    if (msg.status == 'success') {
+        var src = msg.src;
+        var imgtags = document.getElementsByTagName('img');
+        for (var i = 0; i < imgtags.length; i++) {
+            if (imgtags[i].src == src) {
+                imgtags[i].src = msg.data;
+            }
+        }
+    }
+});
 
 // The DOM has already loaded - let's make hay while the sun shines!
 processDOM();

@@ -8,7 +8,7 @@ function imageLoaded() {
     } catch (e) {
         console.error("Dern", e.message);
         console.error(e.stack);
-        chrome.runtime.sendMessage({
+        img._port.postMessage({
             imageRequestResponse: true,
             status: "failure",
             reason: e.message,
@@ -18,7 +18,7 @@ function imageLoaded() {
         return;
     }
     console.info("Bingo!", img.src);
-    chrome.runtime.sendMessage({
+    img._port.postMessage({
         imageRequestResponse: true,
         status: "success",
         src: src,
@@ -29,10 +29,11 @@ function imageLoaded() {
 function imageNotLoaded(event) {
     var img = this;
     var src = img.src;
+    img.failed = true;
     console.error("Failed to load", src, "from", img);
     // console.log(event);
     // debugger;
-    chrome.runtime.sendMessage({
+    img._port.postMessage({
         imageRequestResponse: true,
         src: src,
         status: "failure"
@@ -40,14 +41,18 @@ function imageNotLoaded(event) {
     });
 }
 
-chrome.runtime.onMessage.addListener(function(request, sender) {
-    console.log("Got request: ", request);
-    if (!request.imageRequest)
-        return;
+function onMsg(port, message) {
     var img = document.createElement('img');
     img.addEventListener('load', imageLoaded);
     img.addEventListener('error', imageNotLoaded);
-    img.src = request.src;
-    img.setAttribute('data-url', request.src);
+    img.src = message.src;
+    img._port = port;
+    img.setAttribute('data-url', message.src);
     document.body.appendChild(img);
+}
+
+chrome.runtime.onConnect.addListener(function(port) {
+    if (port.name != 'images')
+        return;
+    port.onMessage.addListener(onMsg.bind(null, port));
 });
