@@ -51,6 +51,17 @@ function processDOM() {
     });
 }
 
+function updatePageImages(oldsrc, newsrc) {
+    _(document.querySelectorAll('img:not(.ColCollapse_REPLACED)'))
+        .where({
+            src: oldsrc
+        })
+        .each(function(img) {
+            img.src = newsrc,
+            img.classList.add('ColCollapse_REPLACED');
+        });
+}
+
 function deferImage(ary, ptr) {
     if (ary.length <= ptr) {
         console.info("Processed all images");
@@ -59,8 +70,8 @@ function deferImage(ary, ptr) {
     var img = ary[ptr];
     console.log(ptr, '/', ary.length, img.src);
     try {
-        collapseImage(img);
-        img.classList.add('ColCollapse_REPLACED');
+        var data = collapseImage(img);
+        updatePageImages(img.src, data);
     } catch (e) {
         console.log("Unable to process", img.src, "- sending to extension.");
         port.postMessage({
@@ -86,19 +97,11 @@ port = chrome.runtime.connect({
 });
 port.onMessage.addListener(function(msg) {
     console.info("Jazzhands", msg);
-    if (msg.status == 'success') {
-        _(document.querySelectorAll('img:not(.ColCollapse_REPLACED)'))
-            .where({
-                src: msg.src
-            })
-            .each(function(img) {
-                img.src = msg.data;
-                img.classList.add('ColCollapse_REPLACED');
-            });
-    }
+    if (msg.status == 'success')
+        updatePageImages(msg.src, msg.data);
 });
 
-// The DOM has already loaded - let's make hay while the sun shines!
+// The DOM s already loaded - let's make hay while the sun shines!
 processDOM();
 setInterval(processDOM, 10 * 1000);
 // Images not so much. Let's wait until they're done.

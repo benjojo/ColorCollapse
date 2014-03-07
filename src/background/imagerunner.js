@@ -4,7 +4,14 @@ function imageLoaded() {
     img.removeEventListener('load', imageLoaded)
     console.info("Loaded", src, "from", img);
     try {
-        collapseImage(img);
+        var data = collapseImage(img);
+        console.info("Bingo!", data);
+        img._port.postMessage({
+            imageRequestResponse: true,
+            status: "success",
+            src: src,
+            data: data
+        });
     } catch (e) {
         console.error("Dern", e.message);
         console.error(e.stack);
@@ -17,13 +24,6 @@ function imageLoaded() {
         });
         return;
     }
-    console.info("Bingo!", img.src);
-    img._port.postMessage({
-        imageRequestResponse: true,
-        status: "success",
-        src: src,
-        data: img.src
-    });
 }
 
 function imageNotLoaded(event) {
