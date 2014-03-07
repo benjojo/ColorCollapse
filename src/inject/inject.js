@@ -56,11 +56,16 @@ function deferImage(ary, ptr) {
         return
     }
     console.log(ptr, '/', ary.length, ary[ptr].src);
-    try {
-        collapseImage(ary[ptr]);
-    } catch (e) {
-        console.error(e);
-    }
+    // try {
+    //     collapseImage(ary[ptr]);
+    // } catch (e) {
+    //     console.error(e);
+    // }
+    chrome.runtime.sendMessage({
+        src: ary[ptr].src,
+        imageRequest: true
+    });
+
 
     setTimeout(function() {
         deferImage(ary, ptr + 1);
@@ -81,3 +86,7 @@ if (document.readyState !== 'complete')
     window.addEventListener('load', processImages);
 else
     processImages();
+
+chrome.runtime.onMessage.addListener(function(request, sender) {
+    console.log("Got request: ", request);
+});
