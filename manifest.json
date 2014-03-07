@@ -11,8 +11,19 @@
     },
     "default_locale": "en",
     "permissions": [
-        "contextMenus"
+        "contextMenus",
+        "http://*/",
+        "https://*/"
     ],
+    "background": {
+        "scripts": [
+            "src/libs/lodash.min.js",
+            "src/libs/labcol.js/col.js",
+            "src/shared/collapse.js",
+            "src/shared/images.js",
+            "src/background/imagerunner.js"
+        ]
+    },
     "content_scripts": [{
         "matches": [
             "http://*/*",
@@ -20,7 +31,9 @@
         ],
         "js": [
             "src/libs/lodash.min.js",
-            "src/inject/labcoljs/col.js",
+            "src/libs/labcol.js/col.js",
+            "src/shared/collapse.js",
+            "src/shared/images.js",
             "src/inject/inject.js"
         ]
     }]
