@@ -9,13 +9,13 @@ function cacheStore(src, data, expires) {
 }
 
 function cacheGet(src) {
-    return false; // Do nothing for now
+    return null; // Do nothing for now
     var item = cache[src];
     if (!item)
-        return false;
+        return null;
     if (item.expires <= Date.now()) {
         delete cache[src];
-        return false;
+        return null;
     }
     return item.data
 }
