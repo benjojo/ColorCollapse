@@ -1,0 +1,7 @@
+{
+  "name": "collorcollapsetest",
+  "version": "1.0.0",
+  "dependencies": {
+    "connect": "~2.14.1"
+  }
+}
