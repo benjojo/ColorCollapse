@@ -29,8 +29,8 @@
     exports.collapseImage = function(imgElement) {
         // create hidden canvas (using image dimensions)
         var canvas = document.createElement("canvas");
-        canvas.width = imgElement.width;
-        canvas.height = imgElement.height;
+        canvas.width = imgElement.naturalWidth || imgElement.width;
+        canvas.height = imgElement.naturalHeight || imgElement.height;
 
         var ctx = canvas.getContext("2d");
         ctx.drawImage(imgElement, 0, 0, canvas.width, canvas.height);
