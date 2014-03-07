@@ -1,23 +1,21 @@
-(function(exports, _) {
+(function(exports) {
     'use strict';
 
     function mangleData(imgdata) {
-        // convert image to grayscale
-        var r, g, b;
+        var r, g, b, rgb;
         for (var p = 0, len = imgdata.length; p < len; p += 4) {
-
-            r = imgdata[p]
+            r = imgdata[p + 0]
             g = imgdata[p + 1];
             b = imgdata[p + 2];
             // alpha channel (p+3) is ignored
-            var rgb = colorCollapse(r, g, b)
+            rgb = colorCollapse(r, g, b)
             imgdata[p + 0] = rgb.r;
             imgdata[p + 1] = rgb.g;
             imgdata[p + 2] = rgb.b;
         }
     }
 
-    function processImg(imgElement) {
+    exports.collapseImage = function(imgElement) {
         // create hidden canvas (using image dimensions)
         var canvas = document.createElement("canvas");
         canvas.width = imgElement.width;
@@ -34,7 +32,4 @@
         canvas.remove();
         return data;
     }
-
-    // Exports
-    exports.collapseImage = processImg;
-})(window, _);
+})(window);
