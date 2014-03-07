@@ -99,6 +99,8 @@ port.onMessage.addListener(function(msg) {
     console.info("Jazzhands", msg);
     if (msg.status == 'success')
         updatePageImages(msg.src, msg.data);
+    else
+        console.warn("Unable to collapse image", msg.src, ":", msg.data);
 });
 
 // The DOM s already loaded - let's make hay while the sun shines!
