@@ -56,16 +56,18 @@ function deferImage(ary, ptr) {
         console.info("Processed all images");
         return
     }
-    console.log(ptr, '/', ary.length, ary[ptr].src);
-    // try {
-    //     collapseImage(ary[ptr]);
-    // } catch (e) {
-    //     console.error(e);
-    // }
-    port.postMessage({
-        src: ary[ptr].src,
-        imageRequest: true
-    });
+    var img = ary[ptr];
+    console.log(ptr, '/', ary.length, img.src);
+    try {
+        collapseImage(img);
+        img.classList.add('ColCollapse_REPLACED');
+    } catch (e) {
+        console.log("Unable to process", img.src, "- sending to extension.");
+        port.postMessage({
+            src: img.src,
+            imageRequest: true
+        });
+    }
 
 
     setTimeout(function() {
@@ -74,7 +76,7 @@ function deferImage(ary, ptr) {
 }
 
 function processImages() {
-    var imgtags = document.getElementsByTagName('img');
+    var imgtags = document.querySelectorAll('img:not(.ColCollapse_REPLACED)');
     var besttags = _.uniq(imgtags, false, 'src');
     deferImage(besttags, 0)
 }
@@ -85,13 +87,14 @@ port = chrome.runtime.connect({
 port.onMessage.addListener(function(msg) {
     console.info("Jazzhands", msg);
     if (msg.status == 'success') {
-        var src = msg.src;
-        var imgtags = document.getElementsByTagName('img');
-        for (var i = 0; i < imgtags.length; i++) {
-            if (imgtags[i].src == src) {
-                imgtags[i].src = msg.data;
-            }
-        }
+        _(document.querySelectorAll('img:not(.ColCollapse_REPLACED)'))
+            .where({
+                src: msg.src
+            })
+            .each(function(img) {
+                img.src = msg.data;
+                img.classList.add('ColCollapse_REPLACED');
+            });
     }
 });
 
