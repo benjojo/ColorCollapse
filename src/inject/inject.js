@@ -111,7 +111,3 @@ if (document.readyState !== 'complete')
     window.addEventListener('load', processImages);
 else
     processImages();
-
-chrome.runtime.onMessage.addListener(function(request, sender) {
-    console.log("Got request: ", request);
-});
