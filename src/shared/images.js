@@ -30,7 +30,9 @@
         mangleData(map.data);
         ctx.putImageData(map, 0, 0);
 
-        return canvas.toDataURL();
+        var data = canvas.toDataURL();
+        canvas.remove();
+        return data;
     }
 
     // Exports
