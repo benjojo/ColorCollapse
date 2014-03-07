@@ -1,5 +1,11 @@
 var cache = {};
 
+/**
+ * @private
+ * @param {string} src
+ * @param {string} data
+ * @param {number} expires
+ */
 function cacheStore(src, data, expires) {
     return; // Do nothing for now
     cache[src] = {
@@ -8,6 +14,11 @@ function cacheStore(src, data, expires) {
     };
 }
 
+/**
+ * @private
+ * @param {string} src
+ * @return {?string}
+ */
 function cacheGet(src) {
     return null; // Do nothing for now
     var item = cache[src];
@@ -20,6 +31,14 @@ function cacheGet(src) {
     return item.data
 }
 
+/**
+ * Sends an imageRequestResponse to the client tab via port
+ * @private
+ * @param {boolean} status
+ * @param {!Port} port
+ * @param {string} src
+ * @param {string} data
+ */
 function sendResponse(status, port, src, data) {
     port.postMessage({
         imageRequestResponse: true,
@@ -29,6 +48,10 @@ function sendResponse(status, port, src, data) {
     });
 }
 
+/**
+ * @private
+ * @this {HTMLImageElement}
+ */
 function imageLoaded() {
     var img = this;
     var src = img.src;
@@ -50,6 +73,11 @@ function imageLoaded() {
 
 }
 
+/**
+ * @private
+ * @param {Event} event
+ * @this {HTMLImageElement}
+ */
 function imageNotLoaded(event) {
     var img = this;
     var src = img.src;
@@ -61,6 +89,11 @@ function imageNotLoaded(event) {
     img.remove();
 }
 
+/**
+ * @private
+ * @param {Port} port
+ * @param {Object} message
+ */
 function onMsg(port, message) {
     var src = message.src;
     var data = cacheGet(src);

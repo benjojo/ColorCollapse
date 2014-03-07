@@ -1,7 +1,12 @@
 (function(exports) {
     'use strict';
 
+    /**
+     * @private
+     * @param {(Uint8ClampedArray|CanvasPixelArray)} imgdata
+     */
     function mangleData(imgdata) {
+        /** @type {number} */
         var r, g, b, rgb;
         for (var p = 0, len = imgdata.length; p < len; p += 4) {
             r = imgdata[p + 0]
@@ -15,6 +20,12 @@
         }
     }
 
+    /**
+     * Returns a data-uri of the colour collapsed version of the image
+     * @nosideeffects
+     * @param {!HTMLImageElement} imgElement
+     * @return {string} data-uri
+     */
     exports.collapseImage = function(imgElement) {
         // create hidden canvas (using image dimensions)
         var canvas = document.createElement("canvas");

@@ -11,10 +11,23 @@
  * Captures the entire line up until the !LAST! rgb() call, the digits within it and then the rest of the line after it.
  * Input: "linear-gradient(rgb(255, 255, 255), rgb(229, 238, 204) 100px)"
  * Output: ["linear-gradient(rgb(255, 255, 255), ", "229", "238", "204", " 100px)"]
+ * @const
+ * @type {RegExp}
  */
 var rgbRegex = /(.*)rgb\((\d+),\s(\d+),\s(\d+)\)(.*)/;
+/**
+ * Chrome API communication port
+ * @const
+ * @type {Port}
+ */
 var port;
 
+/**
+ * @private
+ * @param {string} rulename
+ * @param {number} __
+ * @param {CSSStyleDeclaration} rules
+ */
 function processCSSRule(ruleName, __, rules) {
     try {
         rule = rules[ruleName];
@@ -39,6 +52,10 @@ function processCSSRule(ruleName, __, rules) {
     }
 }
 
+/**
+ * @private
+ * @param {HTMLElement} node
+ */
 function processNode(node) {
     // We don't process links because of issue #9
     if (node.tagName !== "A") {
@@ -48,12 +65,20 @@ function processNode(node) {
     node.classList.add('ColCollapse_PROCESSED');
 }
 
+/**
+ * Traverses through all non-proccessed DOM nodes and colour collapses their CSS
+ */
 function processDOM() {
     _.forEach(document.querySelectorAll("*:not(.ColCollapse_PROCESSED)"), function(node) {
         _.defer(processNode, node);
     });
 }
 
+/**
+ * Replaces src attributes on images
+ * @param {string} oldsrc
+ * @param {string} newsrc
+ */
 function updatePageImages(oldsrc, newsrc) {
     _(document.querySelectorAll('img:not(.ColCollapse_REPLACED)'))
         .where({
@@ -65,6 +90,14 @@ function updatePageImages(oldsrc, newsrc) {
         });
 }
 
+/**
+ * Steps through an image array collapsing each one every 10 milliseconds.
+ * FIXME This function could do with a review
+ * @recursive
+ * @private
+ * @param {Array.<HTMLImageElement>} ary
+ * @param {number} ptr
+ */
 function deferImage(ary, ptr) {
     if (ary.length <= ptr) {
         console.info("Processed all images");
@@ -89,6 +122,9 @@ function deferImage(ary, ptr) {
     }, 10);
 }
 
+/**
+ * Traverses through all non-proccessed images and colour collapses their pixels
+ */
 function processImages() {
     var imgtags = document.querySelectorAll('img:not(.ColCollapse_REPLACED)');
     var besttags = _.uniq(imgtags, false, 'src');
