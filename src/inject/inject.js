@@ -135,7 +135,6 @@ port = chrome.runtime.connect({
     name: "images"
 });
 port.onMessage.addListener(function(msg) {
-    console.info("Jazzhands", msg);
     if (msg.status == 'success')
         updatePageImages(msg.src, msg.data);
     else
