@@ -20,11 +20,11 @@
     function processImg(imgElement) {
         // create hidden canvas (using image dimensions)
         var canvas = document.createElement("canvas");
-        canvas.width = imgElement.offsetWidth;
-        canvas.height = imgElement.offsetHeight;
+        canvas.width = imgElement.width;
+        canvas.height = imgElement.height;
 
         var ctx = canvas.getContext("2d");
-        ctx.drawImage(imgElement, 0, 0);
+        ctx.drawImage(imgElement, 0, 0, canvas.width, canvas.height);
 
         var map = ctx.getImageData(0, 0, canvas.width, canvas.height);
         mangleData(map.data);
