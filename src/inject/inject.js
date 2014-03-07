@@ -1,14 +1,17 @@
-//
-// Color Collapse
-// Content Script for Chrome Extension
-// (c) Kyle Bloss 2013
-// (c) Ben Cartwright Cox 2013-2014
-// (c) Lex Robinson 2014
-//
+/**
+ * @preserve
+ * Color Collapse
+ * Content Script for Chrome Extension
+ * (c) Kyle Bloss 2013
+ * (c) Ben Cartwright Cox 2013-2014
+ * (c) Lex Robinson 2014
+ */
 
-// Captures the entire line up until the !LAST! rgb() call, the digits within it and then the rest of the line after it.
-// Input: "linear-gradient(rgb(255, 255, 255), rgb(229, 238, 204) 100px)"
-// Output: ["linear-gradient(rgb(255, 255, 255), ", "229", "238", "204", " 100px)"]
+/**
+ * Captures the entire line up until the !LAST! rgb() call, the digits within it and then the rest of the line after it.
+ * Input: "linear-gradient(rgb(255, 255, 255), rgb(229, 238, 204) 100px)"
+ * Output: ["linear-gradient(rgb(255, 255, 255), ", "229", "238", "204", " 100px)"]
+ */
 var rgbRegex = /(.*)rgb\((\d+),\s(\d+),\s(\d+)\)(.*)/;
 var port;
 
