@@ -1,0 +1,32 @@
+aside {
+	font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+}
+
+#testdata img {
+	content: "";
+}
+
+#testdata span:before,
+#testdata span:after,
+#testdata img:before,
+#testdata img:after {
+	color: white;
+	background-color: black;
+}
+#testdata span:before {
+	content: "CSS:";
+}
+#testdata img:before {
+	content: "Images:";
+}
+#testdata span:after,
+#testdata img:after {
+	content: "☐";
+}
+
+#testdata span.ColCollapse_PROCESSED:after,
+#testdata img.ColCollapse_REPLACED:after {
+	content: "☑";
+}
+
+
