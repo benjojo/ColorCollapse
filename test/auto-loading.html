@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Automatic Loading Test</title>
+	<style type="text/css">
+		img {
+			width: 429px;
+			height: 285px;
+			border: 1px solid black;
+			display: inline-block;
+		}
+		p {
+			color: white;
+			background-image: linear-gradient(to left, rgb(255, 0, 0), rgb(255, 104, 31), rgb(255, 255, 0), rgb(0, 255, 0), rgb(0, 0, 255), rgb(79, 105, 198), rgb(36, 10, 64));
+		}
+	</style>
+</head>
+<body>
+<aside id="timer"></aside>
+<div id="testdata"></div>
+<template id="templ8">
+<p><font color='#C80046'>L</font><font color='#C80041'>o</font><font color='#C8003C'>r</font><font color='#C70037'>e</font><font color='#C80032'>m</font><font color='#C7002D'> </font><font color='#C80028'>i</font><font color='#C80023'>p</font><font color='#C7001E'>s</font><font color='#C70019'>u</font><font color='#C80013'>m</font><font color='#C8000E'> </font><font color='#C80008'>d</font><font color='#C70003'>o</font><font color='#C80200'>l</font><font color='#C80800'>o</font><font color='#C80D00'>r</font><font color='#C81200'> </font><font color='#C81800'>s</font><font color='#C71D00'>i</font><font color='#C82100'>t</font><font color='#C82600'> </font><font color='#C82B00'>a</font><font color='#C83000'>m</font><font color='#C73400'>e</font><font color='#C83900'>t</font><font color='#C83D00'>,</font><font color='#C84100'> </font><font color='#C74600'>c</font><font color='#C84A00'>o</font><font color='#C84E00'>n</font><font color='#C85200'>s</font><font color='#C85600'>e</font><font color='#C75A00'>c</font><font color='#C75F00'>t</font><font color='#C86300'>e</font><font color='#C86700'>t</font><font color='#C86B00'>u</font><font color='#C86F00'>r</font><font color='#C87300'> </font><font color='#C87700'>a</font><font color='#C87C00'>d</font><font color='#C88000'>i</font><font color='#C78400'>p</font><font color='#C88800'>i</font><font color='#C88D00'>s</font><font color='#C89100'>c</font><font color='#C89600'>i</font><font color='#C89A00'>n</font><font color='#C89F00'>g</font><font color='#C8A400'> </font><font color='#C7A900'>e</font><font color='#C8AE00'>l</font><font color='#C8B300'>i</font><font color='#C8B800'>t</font><font color='#C8BD00'>.</font><font color='#C8C300'> </font><font color='#C6C800'>D</font><font color='#C1C800'>u</font><font color='#BBC800'>i</font><font color='#B6C800'>s</font><font color='#B0C800'> </font><font color='#ABC800'>a</font><font color='#A6C700'>c</font><font color='#A1C800'> </font><font color='#9CC800'>a</font><font color='#97C800'>l</font><font color='#92C800'>i</font><font color='#8DC800'>q</font><font color='#88C800'>u</font><font color='#83C800'>e</font><font color='#7EC800'>t</font><font color='#79C800'> </font><font color='#75C800'>a</font><font color='#70C800'>r</font><font color='#6BC800'>c</font><font color='#66C700'>u</font><font color='#61C800'>,</font><font color='#5CC800'> </font><font color='#58C800'>e</font><font color='#53C800'>u</font><font color='#4EC800'> </font><font color='#49C800'>c</font><font color='#43C700'>o</font><font color='#3EC800'>n</font><font color='#39C800'>s</font><font color='#34C800'>e</font><font color='#2EC800'>q</font><font color='#29C800'>u</font><font color='#23C800'>a</font><font color='#1DC800'>t</font><font color='#17C800'> </font><font color='#11C700'>m</font><font color='#0BC800'>i</font><font color='#04C800'>.</font><font color='#00C702'> </font><font color='#00C808'>S</font><font color='#00C80F'>e</font><font color='#00C815'>d</font><font color='#00C71B'> </font><font color='#00C821'>n</font><font color='#00C826'>o</font><font color='#00C82C'>n</font><font color='#00C832'> </font><font color='#00C837'>r</font><font color='#00C83C'>i</font><font color='#00C841'>s</font><font color='#00C847'>u</font><font color='#00C84C'>s</font><font color='#00C851'> </font><font color='#00C856'>n</font><font color='#00C85B'>e</font><font color='#00C75F'>c</font><font color='#00C864'> </font><font color='#00C869'>r</font><font color='#00C76E'>i</font><font color='#00C773'>s</font><font color='#00C878'>u</font><font color='#00C77C'>s</font><font color='#00C881'> </font><font color='#00C886'>p</font><font color='#00C88B'>o</font><font color='#00C890'>r</font><font color='#00C895'>t</font><font color='#00C89A'>t</font><font color='#00C79F'>i</font><font color='#00C8A4'>t</font><font color='#00C8A9'>o</font><font color='#00C8AE'>r</font><font color='#00C8B4'> </font><font color='#00C8B9'>b</font><font color='#00C8BF'>l</font><font color='#00C8C4'>a</font><font color='#00C5C8'>n</font><font color='#00BFC8'>d</font><font color='#00BAC8'>i</font><font color='#00B5C8'>t</font><font color='#00AFC7'> </font><font color='#00AAC7'>v</font><font color='#00A6C8'>e</font><font color='#00A1C8'>l</font><font color='#009CC8'> </font><font color='#0097C8'>e</font><font color='#0093C8'>t</font><font color='#008EC8'> </font><font color='#008AC8'>d</font><font color='#0086C8'>o</font><font color='#0081C8'>l</font><font color='#007DC8'>o</font><font color='#0079C8'>r</font><font color='#0075C8'>.</font><font color='#0071C8'> </font><font color='#006DC8'>M</font><font color='#0068C7'>a</font><font color='#0064C7'>u</font><font color='#0060C8'>r</font><font color='#005CC8'>i</font><font color='#0058C8'>s</font><font color='#0054C8'> </font><font color='#0050C8'>p</font><font color='#004BC7'>u</font><font color='#0047C8'>l</font><font color='#0043C8'>v</font><font color='#003FC8'>i</font><font color='#003AC8'>n</font><font color='#0036C8'>a</font><font color='#0031C8'>r</font><font color='#002DC8'> </font><font color='#0028C8'>d</font><font color='#0023C8'>i</font><font color='#001EC8'>c</font><font color='#0019C8'>t</font><font color='#0014C7'>u</font><font color='#000FC8'>m</font><font color='#000AC8'> </font><font color='#0004C8'>t</font><font color='#0100C8'>i</font><font color='#0600C8'>n</font><font color='#0C00C8'>c</font><font color='#1100C8'>i</font><font color='#1700C8'>d</font><font color='#1C00C8'>u</font><font color='#2100C8'>n</font><font color='#2600C8'>t</font><font color='#2B00C8'>.</font><font color='#3000C8'> </font><font color='#3500C8'>M</font><font color='#3A00C8'>o</font><font color='#3F00C7'>r</font><font color='#4400C8'>b</font><font color='#4900C8'>i</font><font color='#4E00C8'> </font><font color='#5200C8'>t</font><font color='#5700C8'>i</font><font color='#5C00C8'>n</font><font color='#6100C8'>c</font><font color='#6600C7'>i</font><font color='#6B00C8'>d</font><font color='#6F00C8'>u</font><font color='#7400C8'>n</font><font color='#7900C8'>t</font><font color='#7E00C8'> </font><font color='#8400C8'>l</font><font color='#8900C8'>e</font><font color='#8E00C8'>o</font><font color='#9300C8'> </font><font color='#9900C7'>l</font><font color='#9E00C8'>i</font><font color='#A400C7'>b</font><font color='#AA00C8'>e</font><font color='#B000C8'>r</font><font color='#B600C8'>o</font><font color='#BC00C8'>.</font>
+<img src="sample.jpg" alt="image">
+</p>
+</template>
+<script type="text/javascript">
+	var template = document.getElementById('templ8');
+	var body = document.getElementById('testdata');
+	var next = 0;
+	var timer = document.getElementById('timer');
+	function doTemplate() {
+		body.insertBefore( template.content.firstElementChild.cloneNode(true), body.firstElementChild );
+		if ( body.children.length > 5 ) {
+			body.lastElementChild.remove();
+		}
+		next = Date.now() + 5 * 1000;
+	}
+	doTemplate();
+	window.setInterval(doTemplate, 5 * 1000);
+	function doTimer() {
+		timer.textContent = (next - Date.now());
+	}
+	window.setInterval(doTimer, 10);
+</script>
+</body>
+</html>
