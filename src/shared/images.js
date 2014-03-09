@@ -22,7 +22,6 @@
 
     /**
      * Returns a data-uri of the colour collapsed version of the image
-     * @nosideeffects
      * @param {!HTMLImageElement} imgElement
      * @return {string} data-uri
      */

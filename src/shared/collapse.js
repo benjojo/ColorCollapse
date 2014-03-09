@@ -4,7 +4,6 @@
 
     /**
      * Collapses the RGB accross a colour axis
-     * @nosideeffects
      * @param {number} r
      * @param {number} g
      * @param {number} b

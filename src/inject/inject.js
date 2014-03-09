@@ -24,7 +24,8 @@ var port;
 
 /**
  * @private
- * @param {string} rulename
+ * @this {HTMLElement}
+ * @param {string} ruleName
  * @param {number} __
  * @param {CSSStyleDeclaration} rules
  */
