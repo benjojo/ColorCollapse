@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"> 
+	<title>Alpha Channel Test</title>
+	<style type="text/css">
+		body {
+			background-image: linear-gradient(to left, rgb(255, 0, 0), rgb(255, 104, 31), rgb(255, 255, 0), rgb(0, 255, 0), rgb(0, 0, 255), rgb(79, 105, 198), rgb(36, 10, 64));
+		}
+		.rainbows {
+			color: white;
+			border: 10px solid gray;
+			background-image: linear-gradient(to right, rgba(255, 0, 0,0.5), rgba(255, 104, 31,0.5), rgba(255, 255, 0,0.5), rgba(0, 255, 0,0.5), rgba(0, 0, 255,0.5), rgba(79, 105, 198,0.5), rgba(36, 10, 64,0.5)); 
+		}
+		.ugly1 {
+			color: rgba(255,0,0,0.5); 
+			background-color: rgba(0,255,0,0.5); 
+			border: 10px solid rgba(0,0,255,0.5); 
+		}
+		.ugly2 {
+			color: rgba(0,255,0,0.5); 
+			background-color: rgba(0,0,255,0.5); 
+			border: 10px solid rgba(255,0,0,0.5); 
+		}
+		.ugly3 {
+			color: rgba(0,0,255,0.5); 
+			background-color: rgba(255,0,0,0.5); 
+			border: 10px solid rgba(0,255,0,0.5); 
+		}
+	</style>
+</head>
+<body>
+<p class="rainbows">Dr Test's text of Testing</p>
+<p class="ugly1">Dr Test's text of Testing</p>
+<p class="ugly2">Dr Test's text aof Testing</p>
+<p class="ugly3">Dr Test's text of Testing</p>
+<img src="PNG_transparency_demonstration_1.png">
+</body>
+</html>
