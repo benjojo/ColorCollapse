@@ -150,3 +150,4 @@ if (document.readyState !== 'complete')
     window.addEventListener('load', processImages);
 else
     processImages();
+setInterval(processImages, 10 * 1000);
