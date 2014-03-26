@@ -10,6 +10,13 @@
      * @return {{r: number, g: number, b: number}}
      */
     exports.colorCollapse = function(r, g, b) {
+        // Avoid touching grays
+        if (r === g && g === b)
+            return {
+                r: r,
+                g: g,
+                b: b
+            };
         var labpx = magic.RGBtoLab(r, g, b);
         /** @type {number} */
         var res = (labpx.a + labpx.b) / 2;

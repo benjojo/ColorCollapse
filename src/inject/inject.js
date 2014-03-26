@@ -43,7 +43,7 @@ function processCSSRule(ruleName, __, rules) {
             g = parseInt(ruledata[3], 10);
             b = parseInt(ruledata[4], 10);
             // brief sanity check
-            if (r === b && b === g && (r === 255 || r === 0))
+            if (r === b && b === g)
                 return;
             var collapsed = colorCollapse(r, g, b);
             this.style[ruleName] = ruledata[1] + 'rgb(' + collapsed.r + ',' + collapsed.g + ',' + collapsed.b + ')' + ruledata[5];
