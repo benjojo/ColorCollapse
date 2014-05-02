@@ -135,6 +135,11 @@ function processImages() {
 port = chrome.runtime.connect({
     name: "images"
 });
+
+port2 = chrome.runtime.connect({
+    name: "status"
+});
+
 port.onMessage.addListener(function(msg) {
     if (msg.status == 'success')
         updatePageImages(msg.src, msg.data);
@@ -142,13 +147,22 @@ port.onMessage.addListener(function(msg) {
         console.warn("Unable to collapse image", msg.src, ":", msg.data);
 });
 
-// The DOM s already loaded - let's make hay while the sun shines!
-processDOM();
-setInterval(processDOM, 10 * 1000);
-// Images not so much. Let's wait until they're done.
-if (document.readyState !== 'complete')
-    window.addEventListener('load', processImages);
-else {
-    processImages();
-    setInterval(processImages, 10 * 1000);
-}
+port2.onMessage.addListener(function(msg) {
+    if (msg.allowed) {
+        // The DOM s already loaded - let's make hay while the sun shines!
+        processDOM();
+        setInterval(processDOM, 10 * 1000);
+        // Images not so much. Let's wait until they're done.
+        if (document.readyState !== 'complete')
+            window.addEventListener('load', processImages);
+        else {
+            processImages();
+            setInterval(processImages, 10 * 1000);
+        }
+    }
+});
+
+port2.postMessage({
+    src: document.location.href,
+    imageRequest: false,
+});

@@ -94,7 +94,27 @@ function imageNotLoaded(event) {
  * @param {Port} port
  * @param {Object} message
  */
-function onMsg(port, message) {
+function onStatusMsg(port, message) {
+    var src = message.src;
+
+    var domain = src.split('/')[2];
+    var results = true;
+    if (localStorage[domain] === "no") {
+        results = false;
+    }
+
+    port.postMessage({
+        imageRequestResponse: false,
+        allowed: results,
+    });
+}
+
+/**
+ * @private
+ * @param {Port} port
+ * @param {Object} message
+ */
+function onImgMsg(port, message) {
     var src = message.src;
     var data = cacheGet(src);
     if (data) {
@@ -111,9 +131,12 @@ function onMsg(port, message) {
 }
 
 chrome.runtime.onConnect.addListener(function(port) {
-    if (port.name != 'images')
+    if (port.name === 'images')
+        port.onMessage.addListener(onImgMsg.bind(null, port));
+    else if (port.name === 'status')
+        port.onMessage.addListener(onStatusMsg.bind(null, port));
+    else
         return;
-    port.onMessage.addListener(onMsg.bind(null, port));
 });
 
 chrome.contextMenus.create({
