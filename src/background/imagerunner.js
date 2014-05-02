@@ -1,5 +1,5 @@
 var cache = {};
-
+var statusport = {};
 /**
  * @private
  * @param {string} src
@@ -133,9 +133,10 @@ function onImgMsg(port, message) {
 chrome.runtime.onConnect.addListener(function(port) {
     if (port.name === 'images')
         port.onMessage.addListener(onImgMsg.bind(null, port));
-    else if (port.name === 'status')
+    else if (port.name === 'status') {
+        statusport = port;
         port.onMessage.addListener(onStatusMsg.bind(null, port));
-    else
+    } else
         return;
 });
 
@@ -154,9 +155,17 @@ chrome.contextMenus.create({
             localStorage.setItem(domain, "no");
             alert(domain + " will not be corrected in the future.");
         }
+    }
+});
 
-        // chrome.tabs.getSelected(null, function(tab) {
-        //     chrome.tabs.sendRequest(tab.id, {}, function(response) {});
-        // });
+chrome.contextMenus.create({
+    "title": "Correct this one time",
+    "type": "normal",
+    "contexts": ["all"],
+    "onclick": function(info) {
+        statusport.postMessage({
+            imageRequestResponse: false,
+            allowed: true,
+        });
     }
 });
