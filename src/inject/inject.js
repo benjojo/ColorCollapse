@@ -148,6 +148,7 @@ setInterval(processDOM, 10 * 1000);
 // Images not so much. Let's wait until they're done.
 if (document.readyState !== 'complete')
     window.addEventListener('load', processImages);
-else
+else {
     processImages();
-setInterval(processImages, 10 * 1000);
+    setInterval(processImages, 10 * 1000);
+}
