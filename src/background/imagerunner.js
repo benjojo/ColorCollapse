@@ -117,10 +117,21 @@ chrome.runtime.onConnect.addListener(function(port) {
 });
 
 chrome.contextMenus.create({
-    "title": "Disable correction of this page",
+    "title": "Toggle color correction of page",
     "type": "normal",
     "contexts": ["all"],
     "onclick": function(info) {
+        // info:
+        // Object {editable: false, menuItemId: 63, pageUrl: "https://developer.chrome.com/extensions/contextMenus"}
+        var domain = info.pageUrl.split('/')[2];
+        if (localStorage[domain] === "no") {
+            localStorage.setItem(domain, "yes");
+            alert("Enabled color correction for " + domain);
+        } else {
+            localStorage.setItem(domain, "no");
+            alert(domain + " will not be corrected in the future.");
+        }
+
         // chrome.tabs.getSelected(null, function(tab) {
         //     chrome.tabs.sendRequest(tab.id, {}, function(response) {});
         // });
