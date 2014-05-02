@@ -115,3 +115,14 @@ chrome.runtime.onConnect.addListener(function(port) {
         return;
     port.onMessage.addListener(onMsg.bind(null, port));
 });
+
+chrome.contextMenus.create({
+    "title": "Disable correction of this page",
+    "type": "normal",
+    "contexts": ["all"],
+    "onclick": function(info) {
+        // chrome.tabs.getSelected(null, function(tab) {
+        //     chrome.tabs.sendRequest(tab.id, {}, function(response) {});
+        // });
+    }
+});
