@@ -3,7 +3,7 @@
     "version": "0.0.1",
     "manifest_version": 2,
     "description": "A tool to convert all images on a page to ones that color blind people can see",
-    "homepage_url": "http://benjojo.com",
+    "homepage_url": "http://benjojo.co.uk",
     "icons": {
         "16": "icons/icon16.png",
         "48": "icons/icon48.png",
