@@ -8,19 +8,44 @@
  */
 
 /**
- * Captures the entire line up until the !LAST! rgb() call, the digits within it and then the rest of the line after it.
- * Input: "linear-gradient(rgb(255, 255, 255), rgb(229, 238, 204) 100px)"
- * Output: ["linear-gradient(rgb(255, 255, 255), ", "229", "238", "204", " 100px)"]
+ * Captures a single rgb or rgba instance and extracts the start, r, g and b components and the end.
+ * Input: rgb(255, 255, 255)
+ * Output: "rgb(", 255, 255, 255, ")"
+ * Input: rgba(255, 255, 255, 0.2)
+ * Output: "rgba(", 255, 255, 255, ", 0.2)"
  * @const
  * @type {RegExp}
  */
-var rgbRegex = /(.*)rgb\((\d+),\s(\d+),\s(\d+)\)(.*)/;
+var rgbRegex = /(rgba?\()(\d+),\s(\d+),\s(\d+)([^)]*\))/g
 /**
  * Chrome API communication port
  * @const
  * @type {Port}
  */
 var port;
+
+/**
+ * @private
+ * @param match The total match, unbroken
+ * @param start The start of the token
+ * @param r     Red
+ * @param g     Green
+ * @param b     Blue
+ * @param end   The end of the token
+ */
+function processColor(match, start, r, g, b, end) {
+    r = parseInt(r, 10) || 0;
+    g = parseInt(g, 10) || 0;
+    b = parseInt(b, 10) || 0;
+
+    // brief sanity check
+    if (r === b && b === g)
+        return match;
+
+    var c = colorCollapse(r, g, b);
+
+    return start + c.r + ', ' + c.g + ', ' + c.b + end;
+}
 
 /**
  * @private
@@ -33,20 +58,10 @@ function processCSSRule(ruleName, __, rules) {
     try {
         rule = rules[ruleName];
         if (
-            rule.indexOf("rgb(") !== -1 &&
-            rule.length < 90 &&
-            ruleName.indexOf("webkit") === -1
+            (rule.indexOf("rgb(") !== -1 || rule.indexOf("rgba(") !== -1) &&
+            ruleName.indexOf("webkit") === -1 // Ignore shadow dom
         ) {
-            var ruledata = rule.match(rgbRegex);
-            var r, g, b;
-            r = parseInt(ruledata[2], 10);
-            g = parseInt(ruledata[3], 10);
-            b = parseInt(ruledata[4], 10);
-            // brief sanity check
-            if (r === b && b === g)
-                return;
-            var collapsed = colorCollapse(r, g, b);
-            this.style[ruleName] = ruledata[1] + 'rgb(' + collapsed.r + ',' + collapsed.g + ',' + collapsed.b + ')' + ruledata[5];
+            this.style[ruleName] = rule.replace(rgbRegex, processColor);
         }
     } catch (e) {
         console.error(e);
@@ -73,6 +88,7 @@ function processDOM() {
     _.forEach(document.querySelectorAll("*:not(.ColCollapse_PROCESSED)"), function(node) {
         _.defer(processNode, node);
     });
+    console.info("Processed DOM");
 }
 
 /**
